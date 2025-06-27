@@ -6,27 +6,25 @@ import signal
 import sys
 
 from base.config import (
-    CADDY_CONFIG_FILE,
+    CERTBOT_CF_SECRET_FILE,
+    NGINX_CONFIG_FILE,
     RAINB0W_BACKUP_DIR,
     RAINB0W_CONFIG_FILE,
     RAINB0W_HOME_DIR,
     RAINB0W_USERS_FILE,
     SINGBOX_CONFIG_FILE,
+    WARP_CONF_FILE,
 )
-from proxy.caddy import insert_caddy_params
+from proxy.nginx import configure_nginx
 from proxy.singbox import (
     gen_cdn_proxy_params,
     gen_hysteria_proxy_params,
     insert_proxy_params,
     insert_tls_cert_path,
+    insert_warp_params,
 )
 from user.user_manager import add_user_to_proxies, create_new_user, prompt_username
-from utils.domain_utils import (
-    prompt_cdn_domain,
-    prompt_cloudflare_api_key,
-    prompt_direct_conn_domain,
-    prompt_main_domain,
-)
+from utils.cf_utils import insert_cloudflare_api_key, prompt_cloudflare_api_key
 from utils.helper import (
     gen_random_string,
     load_toml,
@@ -35,6 +33,11 @@ from utils.helper import (
     prompt_clear_screen,
     save_toml,
 )
+from utils.url_utils import (
+    prompt_cdn_domain,
+    prompt_direct_conn_domain,
+    prompt_main_domain,
+)
 from utils.wp_utils import wp_insert_params
 
 
@@ -42,16 +45,24 @@ def apply_config(username=None):
     rainb0w_config = load_toml(RAINB0W_CONFIG_FILE)
     rainb0w_users = load_toml(RAINB0W_USERS_FILE)
 
+    # Configure Certbot
+    insert_cloudflare_api_key(
+        CERTBOT_CF_SECRET_FILE, rainb0w_config["CLOUDFLARE"]["API_KEY"]
+    )
+
     # Insert TLS certs path for inbounds that require it
     insert_tls_cert_path(
-        rainb0w_config["DOMAINS"]["DIRECT_CONN_DOMAIN"],
+        rainb0w_config["DOMAINS"]["MAIN_DOMAIN"],
         SINGBOX_CONFIG_FILE,
     )
     # Configure proxies
     insert_proxy_params(rainb0w_config["PROXY"], SINGBOX_CONFIG_FILE)
 
-    # Configure Caddy
-    insert_caddy_params(rainb0w_config, CADDY_CONFIG_FILE)
+    # Configure WARP endpoint
+    insert_warp_params(SINGBOX_CONFIG_FILE, WARP_CONF_FILE)
+
+    # Configure NGINX
+    configure_nginx(rainb0w_config, NGINX_CONFIG_FILE)
 
     # WordPress
     wp_insert_params(
@@ -104,10 +115,8 @@ def configure():
     progress_indicator("CDN Protocols Subdomain")
     rainb0w_config["DOMAINS"]["CDN_COMPAT_DOMAIN"] = prompt_cdn_domain()
 
-    rainb0w_config["PROXY"] = (
-        gen_cdn_proxy_params(
-            rainb0w_config["DOMAINS"]["CDN_COMPAT_DOMAIN"],
-        )
+    rainb0w_config["PROXY"] = gen_cdn_proxy_params(
+        rainb0w_config["DOMAINS"]["CDN_COMPAT_DOMAIN"],
     )
 
     rainb0w_config["PROXY"].append(
@@ -129,6 +138,7 @@ def configure():
 
 def restore_config():
     if os.path.exists(RAINB0W_BACKUP_DIR):
+        os.makedirs(RAINB0W_HOME_DIR, exist_ok=True)
         shutil.copyfile(
             f"{RAINB0W_BACKUP_DIR}/{os.path.basename(RAINB0W_CONFIG_FILE)}",
             RAINB0W_CONFIG_FILE,

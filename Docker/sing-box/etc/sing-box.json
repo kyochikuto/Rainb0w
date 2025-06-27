@@ -8,38 +8,24 @@
         "servers": [
             {
                 "tag": "local-dns",
-                "address": "local"
+                "address": "local",
+                "address_strategy": "ipv4_only",
+                "detour": "direct"
             },
             {
-                "tag": "block-dns",
-                "address": "rcode://refused"
+                "tag": "adguard-dns-4",
+                "address": "94.140.14.15",
+                "address_strategy": "ipv4_only",
+                "detour": "direct"
             },
             {
-                "tag": "adguard-dns",
-                "address": "94.140.14.14",
+                "tag": "adguard-dns-6",
+                "address": "2a10:50c0::bad1:ff",
+                "address_strategy": "ipv4_only",
                 "detour": "direct"
             }
         ],
-        "rules": [
-            {
-                "type": "logical",
-                "mode": "or",
-                "rules": [
-                    {
-                        "domain_suffix": [
-                            ".ir"
-                        ]
-                    },
-                    {
-                        "geosite": [
-                            "ir"
-                        ]
-                    }
-                ],
-                "server": "block-dns"
-            }
-        ],
-        "final": "adguard-dns",
+        "final": "adguard-dns-4",
         "strategy": "prefer_ipv4"
     },
     "inbounds": [
@@ -66,44 +52,29 @@
             "masquerade": "https://YOUR_MAIN_DOMAIN"
         },
         {
-            "tag": "VLESS_WS",
+            "tag": "VLESS_HTTPUPGRADE",
             "type": "vless",
             "listen": "::",
             "listen_port": 9443,
             "tcp_multi_path": true,
             "users": [],
             "transport": {
-                "type": "ws",
-                "path": "",
-                "headers": {
-                    "Host": ""
-                }
+                "type": "httpupgrade",
+                "host": "",
+                "path": ""
             }
         },
         {
-            "tag": "VLESS_HTTPUPGRADE",
-            "type": "vless",
+            "tag": "VMESS_WS",
+            "type": "vmess",
             "listen": "::",
             "listen_port": 9444,
             "tcp_multi_path": true,
             "users": [],
             "transport": {
-                "type": "httpupgrade",
-                "host": "",
+                "type": "ws",
                 "path": "",
                 "headers": {}
-            }
-        },
-        {
-            "tag": "VLESS_GRPC",
-            "type": "vless",
-            "listen": "::",
-            "listen_port": 9445,
-            "tcp_multi_path": true,
-            "users": [],
-            "transport": {
-                "type": "grpc",
-                "service_name": ""
             }
         }
     ],
@@ -111,53 +82,126 @@
         {
             "type": "direct",
             "tag": "direct"
-        },
+        }
+    ],
+    "endpoints": [
         {
-            "type": "block",
-            "tag": "block"
+            "type": "wireguard",
+            "tag": "warp-out",
+            "system": false,
+            "mtu": 1280,
+            "address": [
+                "10.0.0.1/32"
+            ],
+            "private_key": "",
+            "peers": [
+                {
+                    "address": "engage.cloudflareclient.com",
+                    "port": 2408,
+                    "public_key": "bmXOC+F1FxEMF9dyiK2H5/1SUtzH0JuVo51h2wPfgyo=",
+                    "allowed_ips": [
+                        "0.0.0.0/0"
+                    ]
+                }
+            ]
         }
     ],
     "route": {
-        "geoip": {
-            "path": "/usr/local/share/sing-box/geoip.db",
-            "download_url": "https://github.com/redpilllabs/GFIGeoIP/releases/latest/download/geoip.db",
-            "download_detour": "direct"
-        },
-        "geosite": {
-            "path": "/usr/local/share/sing-box/geosite.db",
-            "download_url": "https://github.com/redpilllabs/GFIGeoIP/releases/latest/download/geosite.db",
-            "download_detour": "direct"
-        },
-        "rules": [
+        "rule_set": [
             {
-                "geosite": [
-                    "category-ads-all"
-                ],
-                "outbound": "block"
+                "type": "remote",
+                "tag": "geosite-malware",
+                "format": "binary",
+                "url": "https://raw.githubusercontent.com/Chocolate4U/Iran-sing-box-rules/rule-set/geosite-malware.srs",
+                "download_detour": "direct"
             },
             {
-                "type": "logical",
-                "mode": "or",
+                "type": "remote",
+                "tag": "geoip-malware",
+                "format": "binary",
+                "url": "https://raw.githubusercontent.com/Chocolate4U/Iran-sing-box-rules/rule-set/geoip-malware.srs",
+                "download_detour": "direct"
+            },
+            {
+                "type": "remote",
+                "tag": "geosite-phishing",
+                "format": "binary",
+                "url": "https://raw.githubusercontent.com/Chocolate4U/Iran-sing-box-rules/rule-set/geosite-phishing.srs",
+                "download_detour": "direct"
+            },
+            {
+                "type": "remote",
+                "tag": "geoip-phishing",
+                "format": "binary",
+                "url": "https://raw.githubusercontent.com/Chocolate4U/Iran-sing-box-rules/rule-set/geoip-phishing.srs",
+                "download_detour": "direct"
+            },
+            {
+                "type": "remote",
+                "tag": "geosite-cryptominers",
+                "format": "binary",
+                "url": "https://raw.githubusercontent.com/Chocolate4U/Iran-sing-box-rules/rule-set/geosite-cryptominers.srs",
+                "download_detour": "direct"
+            },
+            {
+                "type": "remote",
+                "tag": "geosite-ir",
+                "format": "binary",
+                "url": "https://raw.githubusercontent.com/Chocolate4U/Iran-sing-box-rules/rule-set/geosite-ir.srs",
+                "download_detour": "direct"
+            },
+            {
+                "type": "remote",
+                "tag": "geoip-ir",
+                "format": "binary",
+                "url": "https://raw.githubusercontent.com/Chocolate4U/Iran-sing-box-rules/rule-set/geoip-ir.srs",
+                "download_detour": "direct"
+            },
+            {
+                "type": "inline",
+                "tag": "youtube",
                 "rules": [
                     {
-                        "domain_suffix": [
-                            ".ir"
+                        "domain_regex": [
+                            "(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)*youtube\\.com",
+                            "(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)*youtu\\.be",
+                            "(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)*ytimg\\.com",
+                            "(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)*ggpht\\.com",
+                            "(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)*googlevideo\\.com"
                         ]
                     },
                     {
-                        "geosite": [
-                            "ir"
-                        ]
-                    },
-                    {
-                        "geoip": [
-                            "ir"
+                        "domain": [
+                            "youtube-ui.l.google.com"
                         ]
                     }
-                ],
-                "invert": false,
-                "outbound": "block"
+                ]
             }
-        ]
+        ],
+        "rules": [
+            {
+                "rule_set": [
+                    "geosite-malware",
+                    "geosite-phishing",
+                    "geosite-cryptominers"
+                ],
+                "action": "reject"
+            },
+            {
+                "rule_set": [
+                    "geoip-malware",
+                    "geoip-phishing"
+                ],
+                "action": "reject"
+            },
+            {
+                "rule_set": [
+                    "youtube"
+                ],
+                "action": "route",
+                "outbound": "direct"
+            }
+        ],
+        "final": "warp-out"
     }
 }

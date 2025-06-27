@@ -1,0 +1,25 @@
+services:
+  nginx:
+    image: nginx:latest
+    container_name: nginx
+    restart: unless-stopped
+    cap_add:
+      - CAP_NET_BIND_SERVICE
+    networks:
+      - web
+      - proxy-tier
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - /var/log/nginx:/var/log/nginx
+      - /etc/localtime:/etc/localtime:ro
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - ./etc/nginx.conf:/etc/nginx/nginx.conf
+
+networks:
+  web:
+    external: true
+  proxy-tier:
+    external: true

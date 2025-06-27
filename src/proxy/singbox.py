@@ -1,21 +1,22 @@
 from random import randint
 
 from base.config import TLS_CERTS_DIR
-from utils.domain_utils import get_cert_dir
 from utils.helper import gen_random_string, load_json, save_json
+from utils.url_utils import extract_domain, is_subdomain
 
 
 def insert_tls_cert_path(
-    direct_conn_subdomain: str,  config_file_path: str
+    main_domain: str,  config_file_path: str
 ):
     proxy_config = load_json(config_file_path)
-
-    # We only need TLS config for Hysteria, TCP inbounds recv cleartext traffic from Caddy reverse proxy
+    if is_subdomain(main_domain):
+        main_domain = extract_domain(main_domain)
+        
+    # We only need TLS config for Hysteria, TCP inbounds recv cleartext traffic from NGINX reverse proxy
     for inbound in proxy_config["inbounds"]:
         if inbound["tag"] == "HYSTERIA":
-            domain_cert_dir = get_cert_dir(direct_conn_subdomain)
-            cert_path = f"{TLS_CERTS_DIR}/{domain_cert_dir}/{domain_cert_dir}.crt"
-            key_path = f"{TLS_CERTS_DIR}/{domain_cert_dir}/{domain_cert_dir}.key"
+            cert_path = f"{TLS_CERTS_DIR}/{main_domain}/fullchain.pem"
+            key_path = f"{TLS_CERTS_DIR}/{main_domain}/privkey.pem"
             inbound["tls"]["certificate_path"] = cert_path
             inbound["tls"]["key_path"] = key_path
         else:
@@ -29,7 +30,7 @@ def gen_cdn_proxy_params(cdn_subdomain: str) -> list:
 
     proxy_params.append(
         {
-            "type": "VLESS_WS",
+            "type": "VLESS_HTTPUPGRADE",
             "host": cdn_subdomain,
             "path": f"/{gen_random_string(randint(5, 10))}",
         }
@@ -37,16 +38,9 @@ def gen_cdn_proxy_params(cdn_subdomain: str) -> list:
 
     proxy_params.append(
         {
-            "type": "VLESS_HTTPUPGRADE",
+            "type": "VMESS_WS",
             "host": cdn_subdomain,
-            "path": f"/{gen_random_string(randint(5, 10))}?ed=2560",
-        }
-    )
-
-    proxy_params.append(
-        {
-            "type": "VLESS_GRPC",
-            "service_name": gen_random_string(randint(5, 10)),
+            "path": f"/{gen_random_string(randint(5, 10))}",
         }
     )
 
@@ -68,9 +62,9 @@ def insert_proxy_params(proxy_params: list, config_file_path: str):
     config = load_json(config_file_path)
 
     for inbound in config["inbounds"]:
-        if inbound["tag"] == "VLESS_WS":
+        if inbound["tag"] == "VMESS_WS":
             proxy_config = next(
-                (item for item in proxy_params if item["type"] == "VLESS_WS")
+                (item for item in proxy_params if item["type"] == "VMESS_WS")
             )
             inbound["transport"]["path"] = proxy_config["path"]
             inbound["transport"]["headers"]["Host"] = proxy_config["host"]
@@ -80,11 +74,6 @@ def insert_proxy_params(proxy_params: list, config_file_path: str):
             )
             inbound["transport"]["path"] = proxy_config["path"]
             inbound["transport"]["host"] = proxy_config["host"]
-        elif inbound["tag"] == "VLESS_GRPC":
-            proxy_config = next(
-                (item for item in proxy_params if item["type"] == "VLESS_GRPC")
-            )
-            inbound["transport"]["service_name"] = proxy_config["service_name"]
         elif inbound["tag"] == "HYSTERIA":
             proxy_config = next(
                 (item for item in proxy_params if item["type"] == "HYSTERIA")
@@ -109,9 +98,20 @@ def change_dns_server(target_tag: str, dns_address: str, config_file_path: str):
 
 def enable_porn_dns_blocking(config_file_path: str):
     print("[bold green]>> Block Porn by DNS")
-    change_dns_server("adguard-dns", "94.140.14.15", config_file_path)
+    change_dns_server("adguard-dns-4", "94.140.14.15", config_file_path)
+    change_dns_server("adguard-dns-6", "2a10:50c0::bad1:ff", config_file_path)
 
 
 def disable_porn_dns_blocking(config_file_path: str):
     print("[bold green]>> Unblock Porn by DNS")
-    change_dns_server("adguard-dns", "94.140.14.14", config_file_path)
+    change_dns_server("adguard-dns-4", "94.140.14.14", config_file_path)
+    change_dns_server("adguard-dns-6", "2a10:50c0::ad1:ff", config_file_path)
+
+
+def insert_warp_params(config_file_path: str, warp_conf_file: str):
+    warp_conf = load_json(warp_conf_file)
+    proxy_conf = load_json(config_file_path)
+
+    proxy_conf["endpoints"][0]["private_key"] = warp_conf["private_key"]
+
+    save_json(proxy_conf, config_file_path)

@@ -34,6 +34,7 @@ function fn_install_required_packages() {
     fn_check_and_install_pkg iptables-persistent
     fn_check_and_install_pkg python3-pip
     fn_check_and_install_pkg python3-venv
+    fn_check_and_install_pkg snapd
 }
 
 function fn_activate_venv() {

@@ -10,13 +10,13 @@ source $PWD/src/shell/docker/init_vol_net.sh
 source $PWD/src/shell/performance/tune_kernel_net.sh
 
 # Activate necessary protections
-source $PWD/src/shell/access_control/setup_firewall.sh
+source $PWD/src/shell/security/setup_firewall.sh
 
-# Start off with Caddy since we need TLS certs
-fn_restart_docker_container "caddy"
-echo -e "${B_YELLOW}Waiting 30 seconds to let Caddy obtains TLS certs...${RESET}"
-sleep 30
+# Get TLS certs
+domain=$(python3 $PWD/src/shell/helper/get_domain.py)
+source $PWD/src/shell/security/get_tls_certs.sh $domain
 
+fn_restart_docker_container "nginx"
 fn_restart_docker_container "sing-box"
 
 # Setup a fake WordPress blog if we have enough memory

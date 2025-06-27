@@ -81,12 +81,6 @@ ip6tables -A INPUT -m geoip --src-cc IR,CF -m comment --comment "Drop everything
 iptables -I FORWARD -i $INTERFACE -m geoip ! --src-cc IR,CF -m conntrack --ctstate NEW -m comment --comment "Drop everything except Iran and Cloudflare" -j DROP
 ip6tables -I FORWARD -i $INTERFACE -m geoip ! --src-cc IR,CF -m conntrack --ctstate NEW -m comment --comment "Drop everything except Iran and Cloudflare" -j DROP
 
-echo -e "${B_GREEN}>> Drop OUTGOING connections to Iran and China ${RESET}"
-iptables -I FORWARD -m geoip --dst-cc IR,CN -m conntrack --ctstate NEW -m comment --comment "Drop Outgoing to IR,CN" -j REJECT
-ip6tables -I FORWARD -m geoip --dst-cc IR,CN -m conntrack --ctstate NEW -m comment --comment "Drop Outgoing to IR,CN" -j REJECT
-iptables -A OUTPUT -m geoip --dst-cc IR,CN -m conntrack --ctstate NEW -m comment --comment "Drop Outgoing to IR,CN" -j REJECT
-ip6tables -A OUTPUT -m geoip --dst-cc IR,CN -m conntrack --ctstate NEW -m comment --comment "Drop Outgoing to IR,CN" -j REJECT
-
 echo -e "${B_GREEN}>> Allow HTTP and HTTPS/QUIC ${RESET}"
 iptables -A INPUT -p tcp --dport 80 -m conntrack --ctstate NEW -m comment --comment "Allow HTTP" -j ACCEPT
 ip6tables -A INPUT -p tcp --dport 80 -m conntrack --ctstate NEW -m comment --comment "Allow HTTP" -j ACCEPT

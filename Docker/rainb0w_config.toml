@@ -9,5 +9,5 @@ CDN_COMPAT_DOMAIN = ""
 
 
 [CLOUDFLARE]
-# This key will help Caddy's Cloudflare DNS plugin to verify your domain using DNS-01 challenges and obtain TLS certs
-CLOUDFLARE_API_KEY = ""
+# This is used for the Cerbot Cloudflare DNS plugin to verify your domain using DNS-01 challenges and obtain TLS certs
+API_KEY = ""

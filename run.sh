@@ -65,6 +65,10 @@ if [ ! -d "$HOME/Rainb0w_Home" ]; then
     source $PWD/src/shell/os/install_xt_geoip.sh
     # Install Docker
     source $PWD/src/shell/os/install_docker.sh
+    # Install Certbot
+    source $PWD/src/shell/os/install_certbot.sh
+    # Install WARP Plus
+    source $PWD/src/shell/os/install_warp_plus.sh
     # Reboot if needed
     source $PWD/src/shell/os/check_reboot_required.sh
     clear
@@ -84,7 +88,7 @@ function clear_and_copy_files() {
 function installer_menu() {
     echo -ne "
 Rainb0w Proxy Installer v${VERSION}
-Red Pill Labs
+[github.com/kyochikuto]
 
 Install: Setup new proxies
 Restore: Restore a previous installation's configuration and users

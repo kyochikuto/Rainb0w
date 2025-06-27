@@ -13,6 +13,14 @@ import toml
 import yaml
 
 
+def load_conf(conf_file: str):
+    with open(conf_file, mode="+r") as f:
+        return f.read()
+    
+def save_conf(data, conf_file: str):
+    with open(conf_file, mode="w") as f:
+        f.write(data)  
+
 def load_json(json_file: str):
     with open(json_file, mode="+r") as f:
         return json.load(f)

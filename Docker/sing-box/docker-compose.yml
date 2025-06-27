@@ -1,32 +1,27 @@
 services:
     sing-box:
-        image: ghcr.io/kyochikuto/sing-box-plus:latest
+        image: ghcr.io/sagernet/sing-box:latest
         container_name: sing-box
         restart: unless-stopped
         networks:
-          - caddy
+          - web
+          - proxy-tier
+        expose:
+          - "9443"
+          - "9444"
         ports:
           - "8443:8443/udp"
-          - "9443:9443"
-          - "9444:9444"
-          - "9445:9445"
         volumes:
-          - caddy_data:/etc/letsencrypt:ro
-          - sockets:/dev/shm
+          - /etc/letsencrypt:/etc/letsencrypt:ro
           - /var/log:/var/log/:rw
           - /etc/localtime:/etc/localtime:ro
           - ./etc/sing-box.json:/etc/sing-box/config.json:ro
-          - ./geodata:/usr/local/share/sing-box
-        command: "sing-box run -c /etc/sing-box/config.json"
-
-volumes:
-  caddy_data:
-    external: true
-  sockets:
-    external: true
+        command: "run -c /etc/sing-box/config.json"
 
 networks:
-  caddy:
+  web:
+    external: true
+  proxy-tier:
     external: true
 
 

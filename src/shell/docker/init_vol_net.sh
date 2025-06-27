@@ -1,12 +1,12 @@
 #!/bin/bash
 source $PWD/src/shell/base/colors.sh
 
-if ! docker volume list | awk '{print $2}' | grep -q '^sockets$'; then
-    echo -e "${B_GREEN}>> Creating shared Docker volume for UNIX sockets ${RESET}"
-    docker volume create sockets >/dev/null
+if ! docker network list | awk '{print $2}' | grep -q '^web$'; then
+    echo -e "${B_GREEN}>> Creating a Docker network for NGINX's front-end ${RESET}"
+    docker network create web >/dev/null
 fi
 
-if ! docker network list | awk '{print $2}' | grep -q '^caddy$'; then
-    echo -e "${B_GREEN}>> Creating shared Docker network for Caddy's reverse proxy ${RESET}"
-    docker network create --subnet=172.18.0.0/16 caddy >/dev/null
+if ! docker network list | awk '{print $2}' | grep -q '^proxy-tier$'; then
+    echo -e "${B_GREEN}>> Creating a Docker network for proxies ${RESET}"
+    docker network create proxy-tier >/dev/null
 fi

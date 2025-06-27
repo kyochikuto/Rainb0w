@@ -1,7 +1,7 @@
 #!/bin/bash
 
 if [ "$(lsmod | grep ^xt_geoip)" ]; then
-    curl -fsSL "https://github.com/redpilllabs/GFIGeoIP/releases/latest/download/agg_cidrs.csv" >/tmp/agg_cidrs.csv
+    curl -fsSL "https://github.com/kyochikuto/sing-box-geodata/releases/latest/download/agg_cidrs.csv" >/tmp/agg_cidrs.csv
 
     # Check if it is newer than what we already have
     if cmp -s /usr/libexec/rainb0w/agg_cidrs.csv /tmp/agg_cidrs.csv; then

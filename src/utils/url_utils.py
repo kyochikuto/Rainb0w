@@ -1,4 +1,5 @@
 import re
+import urllib.parse
 
 
 def is_domain(domain: str) -> bool:
@@ -27,31 +28,23 @@ def extract_domain(domain: str) -> str:
         return domain
 
 
-def get_cert_dir(domain: str) -> str:
-    """
-    Wildcard (SANS) domain certificates are only supported for non-free TLDs
-    This function checks the input domain and returns the appropriate path
-
-    Args:
-        domain (str): Input domain
-
-    Returns:
-        str: Dir name that gets appended to the certificates path
-    """
-    if is_subdomain(domain):
-        main_domain = extract_domain(domain)
-        return f"wildcard_.{main_domain}"
-    else:
-        return domain
-
-
 def prompt_main_domain() -> str:
-    print("This will be used to setup a dummy WordPress blog to offer to active probers.")
+    print(
+        "This will be used to setup a dummy WordPress blog to offer to active probers."
+    )
     main_domain = input("\nEnter your decoy domain (e.g example.com): ")
-    while not (is_domain(main_domain) or is_subdomain(main_domain) or is_free_domain(main_domain)):
-        print("\nInvalid domain name! Please enter in this format: example.com or sub.example.com")
+    while not (
+        is_domain(main_domain)
+        or is_subdomain(main_domain)
+        or is_free_domain(main_domain)
+    ):
+        print(
+            "\nInvalid domain name! Please enter in this format: example.com or sub.example.com"
+        )
         if is_free_domain(main_domain):
-            print("\nFree domains (.gq, .cf, .ml, .tk, or .ga) are not supported by the Cloudflare DNS plugin.")
+            print(
+                "\nFree domains (.gq, .cf, .ml, .tk, or .ga) are not supported by the Cloudflare DNS plugin."
+            )
         main_domain = input("Enter your decoy domain: ")
 
     return main_domain
@@ -82,9 +75,8 @@ def prompt_direct_conn_domain():
 def prompt_cdn_domain() -> str:
     print(
         """Your CDN subdomain will be used for the following:
-    - VLESS Websocket
     - VLESS HTTPUpgrade
-    - VLESS gRPC
+    - VMESS Websocket
     """
     )
     cdn_domain = input("\nEnter subdomain for CDN connections (e.g sub.example.com): ")
@@ -100,16 +92,6 @@ def prompt_cdn_domain() -> str:
 
     return cdn_domain
 
-
-
-def prompt_cloudflare_api_key():
-    print(
-        """You Cloudflare API key will be used by Caddy to obtain TLS certs by
-verifying DNS-01 challenges. The API key must have the permission to edit DNS Zones."""
-    )
-    cf_api_key = input("\nEnter your Cloudflare API key: ")
-    while not cf_api_key:
-        print("\nInvalid API key!")
-        cf_api_key = input("Enter your Cloudflare API key: ")
-
-    return cf_api_key
+def safe_url_encode(input_string: str) -> str:
+    """Safely percent-encode a string for use in a URL."""
+    return urllib.parse.quote(input_string, safe='')

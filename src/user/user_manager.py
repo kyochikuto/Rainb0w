@@ -4,12 +4,15 @@ from uuid import uuid4
 from rich import print
 
 from utils.helper import (
+    base64_encode,
+    bytes_to_raw_str,
     gen_random_string,
     load_json,
     load_toml,
     save_json,
     save_toml,
 )
+from utils.url_utils import safe_url_encode
 
 
 def get_users(rainb0w_users_file: str) -> list:
@@ -38,9 +41,8 @@ def create_new_user(username: str):
         "password": password,
         "uuid": uuid,
         "hysteria_url": "",
-        "vless_ws_url": "",
         "vless_httpupgrade_url": "",
-        "vless_grpc_url": ""
+        "vmess_ws_url": ""
     }
     return user_info
 
@@ -53,22 +55,38 @@ def add_share_urls(
     domains = rainb0w_config["DOMAINS"]
     proxies = rainb0w_config["PROXY"]
 
-    proxy_config = next((item for item in proxies if item["type"] == "VLESS_WS"))
-    user_info["vless_ws_url"] = (
-        f"vless://{user_info['uuid']}@{domains['CDN_COMPAT_DOMAIN']}:443?path={proxy_config['path']}&security=tls&encryption=none&alpn=http/1.1&host={proxy_config['host']}&type=ws&fp=randomized&sni={domains['CDN_COMPAT_DOMAIN']}#VLESS%20Websocket"
-    )
-
     proxy_config = next(
         (item for item in proxies if item["type"] == "VLESS_HTTPUPGRADE")
     )
+    vless_path = f"{proxy_config['path']}?ed=2560"
     user_info["vless_httpupgrade_url"] = (
-        f"vless://{user_info['uuid']}@{domains['CDN_COMPAT_DOMAIN']}:443?security=tls&encryption=none&alpn=http/1.1&host={proxy_config['host']}&path={proxy_config['path']}&type=httupgrade&fp=randomized&sni={domains['CDN_COMPAT_DOMAIN']}#VLESS%20HTTUpgrade"
+        f"vless://{user_info['uuid']}@{domains['CDN_COMPAT_DOMAIN']}:443?security=tls&encryption=none&alpn=http/1.1&host={proxy_config['host']}&path={safe_url_encode(vless_path)}&type=httpupgrade&fp=randomized&fragment=tlshello%2C100-200%2C1-2&sni={domains['CDN_COMPAT_DOMAIN']}#VLESS%20HTTUpgrade"
     )
 
-    proxy_config = next((item for item in proxies if item["type"] == "VLESS_GRPC"))
-    user_info["vless_grpc_url"] = (
-        f"vless://{user_info['uuid']}@{domains['CDN_COMPAT_DOMAIN']}:443?mode=gun&security=tls&encryption=none&alpn=h2,http/1.1&type=grpc&serviceName={proxy_config['service_name']}&fp=randomized&sni={domains['CDN_COMPAT_DOMAIN']}#VLESS%20gRPC"
+    # VMESS Websocket
+    proxy_config = next(
+        (item for item in proxies if item["type"] == "VMESS_WS")
     )
+    vmess_object = {
+        "add": domains["CDN_COMPAT_DOMAIN"],
+        "aid": "0",
+        "alpn": "http/1.1",
+        "fp": "randomized",
+        "host": domains["CDN_COMPAT_DOMAIN"],
+        "id": user_info["uuid"],
+        "net": "ws",
+        "path": proxy_config["path"],
+        "port": "443",
+        "ps": "VMESS Websocket",
+        "scy": "none",
+        "sni": domains["CDN_COMPAT_DOMAIN"],
+        "tls": "tls",
+        "type": "",
+        "v": "2",
+    }
+    vmess_object = base64_encode(vmess_object)
+    vmess_object = bytes_to_raw_str(vmess_object)
+    user_info["vmess_ws_url"] = (f"vmess://{vmess_object}")
 
     proxy_config = next((item for item in proxies if item["type"] == "HYSTERIA"))
     user_info["hysteria_url"] = (
@@ -88,7 +106,7 @@ def add_user_to_proxies(
     config = load_json(singbox_config_file)
 
     for inbound in config["inbounds"]:
-        if inbound["type"] == "vless":
+        if inbound["type"] in ["vless", "vmess"]:
             new_client = {"name": user_info["name"], "uuid": user_info["uuid"]}
             inbound["users"].append(new_client)
         elif inbound["type"] == "hysteria2":
@@ -135,10 +153,9 @@ def print_client_info(username: str, rainb0w_users_file: str):
                 print(
                     f"""\nShare urls for '{username}':
 
-[bold green]VLESS (Websocket):[/bold green] [white]{user['vless_ws_url']}[/white]\n
-[bold green]VLESS (HTTPUpgrade):[/bold green] [white]{user['vless_httpupgrade_url']}[/white]\n
-[bold green]VLESS (gRPC):[/bold green] [white]{user['vless_grpc_url']}[/white]\n
 [bold green]Hysteria:[/bold green] [white]{user['hysteria_url']}[/white]\n
+[bold green]VLESS (HTTPUpgrade):[/bold green] [white]{user['vless_httpupgrade_url']}[/white]\n
+[bold green]VMESS (Websocket):[/bold green] [white]{user['vmess_ws_url']}[/white]\n
 
 [bold yellow]NOTE: DO NOT SHARE THESE INFORMATION OVER SMS,
 USE EMAILS OR OTHER SECURE WAYS OF COMMUNICATION INSTEAD![/bold yellow]""".lstrip()
