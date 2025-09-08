@@ -25,7 +25,7 @@ if [ $MEMORY_SIZE -gt 512 ]; then
     echo -e "${B_GREEN}>>> Creating a WordPress Docker image...${RESET}"
     # Build a Docker image for WordPress and check if the image was successfully built
     if [ ! "$(docker images -q wordpress)" ]; then
-        docker buildx build --tag wordpress $HOME/Rainb0w_Home/wordpress/
+        docker build -t wordpress $HOME/Rainb0w_Home/wordpress/
         if [ ! "$(docker images -q wordpress)" ]; then
             echo -e "${B_RED}There was an issue when building a Docker image for 'WordPress', check the logs!${RESET}"
             echo -e "${B_YELLOW}After resolving the issue, run the installer again.${RESET}"
