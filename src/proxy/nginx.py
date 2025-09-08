@@ -37,6 +37,6 @@ def configure_nginx(rainb0w_config: dict, nginx_config_file: str):
     proxy_config = next(
         (item for item in rainb0w_config["PROXY"] if item["type"] == "VLESS_GRPC")
     )
-    nginx_config = nginx_config.replace("VLESS_GRPC_PATH", proxy_config["path"])
+    nginx_config = nginx_config.replace("VLESS_GRPC_PATH", proxy_config["service_name"])
 
     save_conf(nginx_config, nginx_config_file)
