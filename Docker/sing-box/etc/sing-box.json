@@ -8,25 +8,31 @@
         "servers": [
             {
                 "tag": "local-dns",
-                "address": "local",
-                "address_strategy": "ipv4_only",
-                "detour": "direct"
+                "type": "local"
             },
             {
-                "tag": "adguard-dns-4",
-                "address": "94.140.14.15",
-                "address_strategy": "ipv4_only",
-                "detour": "direct"
+                "tag": "adguard-dns",
+                "type": "udp",
+                "server": "94.140.14.14",
+                "server_port": 53
             },
             {
-                "tag": "adguard-dns-6",
-                "address": "2a10:50c0::bad1:ff",
-                "address_strategy": "ipv4_only",
-                "detour": "direct"
+                "tag": "adguard-dns-family",
+                "type": "udp",
+                "server": "94.140.14.15",
+                "server_port": 53
             }
         ],
-        "final": "adguard-dns-4",
-        "strategy": "prefer_ipv4"
+        "rules": [
+            {
+                "domain_suffix": [
+                    ".ir"
+                ],
+                "action": "route",
+                "server": "local-dns"
+            }
+        ],
+        "final": "adguard-dns"
     },
     "inbounds": [
         {
@@ -52,29 +58,28 @@
             "masquerade": "https://YOUR_MAIN_DOMAIN"
         },
         {
-            "tag": "VLESS_HTTPUPGRADE",
+            "tag": "VLESS_WS",
             "type": "vless",
             "listen": "::",
             "listen_port": 9443,
             "tcp_multi_path": true,
             "users": [],
             "transport": {
-                "type": "httpupgrade",
-                "host": "",
-                "path": ""
+                "type": "ws",
+                "path": "",
+                "headers": {}
             }
         },
         {
-            "tag": "VMESS_WS",
-            "type": "vmess",
+            "tag": "VLESS_GRPC",
+            "type": "vless",
             "listen": "::",
             "listen_port": 9444,
             "tcp_multi_path": true,
             "users": [],
             "transport": {
-                "type": "ws",
-                "path": "",
-                "headers": {}
+                "type": "grpc",
+                "service_name": ""
             }
         }
     ],

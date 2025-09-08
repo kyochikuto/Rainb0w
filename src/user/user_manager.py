@@ -41,8 +41,8 @@ def create_new_user(username: str):
         "password": password,
         "uuid": uuid,
         "hysteria_url": "",
-        "vless_httpupgrade_url": "",
-        "vmess_ws_url": ""
+        "vless_ws_url": "",
+        "vless_grpc_url": ""
     }
     return user_info
 
@@ -55,42 +55,27 @@ def add_share_urls(
     domains = rainb0w_config["DOMAINS"]
     proxies = rainb0w_config["PROXY"]
 
+    # VLESS Websocket
     proxy_config = next(
-        (item for item in proxies if item["type"] == "VLESS_HTTPUPGRADE")
+        (item for item in proxies if item["type"] == "VLESS_WS")
     )
-    vless_path = f"{proxy_config['path']}?ed=2560"
-    user_info["vless_httpupgrade_url"] = (
-        f"vless://{user_info['uuid']}@{domains['CDN_COMPAT_DOMAIN']}:443?security=tls&encryption=none&alpn=http/1.1&host={proxy_config['host']}&path={safe_url_encode(vless_path)}&type=httpupgrade&fp=randomized&fragment=tlshello%2C100-200%2C1-2&sni={domains['CDN_COMPAT_DOMAIN']}#VLESS%20HTTUpgrade"
+    vless_path = f"{proxy_config['path']}"
+    user_info["vless_ws_url"] = (
+        f"vless://{user_info['uuid']}@{domains['CDN_COMPAT_DOMAIN']}:443?security=tls&encryption=none&alpn=http/1.1&host={proxy_config['host']}&path={safe_url_encode(vless_path)}&type=ws&fp=randomized&fragment=tlshello%2C100-200%2C1-2&sni={domains['CDN_COMPAT_DOMAIN']}#{user_info['name']}%20[VLESS%20Websocket]"
     )
 
-    # VMESS Websocket
+    # VLESS gRPC
     proxy_config = next(
-        (item for item in proxies if item["type"] == "VMESS_WS")
+        (item for item in proxies if item["type"] == "VLESS_GRPC")
     )
-    vmess_object = {
-        "add": domains["CDN_COMPAT_DOMAIN"],
-        "aid": "0",
-        "alpn": "http/1.1",
-        "fp": "randomized",
-        "host": domains["CDN_COMPAT_DOMAIN"],
-        "id": user_info["uuid"],
-        "net": "ws",
-        "path": proxy_config["path"],
-        "port": "443",
-        "ps": "VMESS Websocket",
-        "scy": "none",
-        "sni": domains["CDN_COMPAT_DOMAIN"],
-        "tls": "tls",
-        "type": "",
-        "v": "2",
-    }
-    vmess_object = base64_encode(vmess_object)
-    vmess_object = bytes_to_raw_str(vmess_object)
-    user_info["vmess_ws_url"] = (f"vmess://{vmess_object}")
+    user_info["vless_grpc_url"] = (
+        f"vless://{user_info['uuid']}@{domains['CDN_COMPAT_DOMAIN']}:443?mode=gun&security=tls&encryption=none&alpn=h2,http/1.1&type=grpc&serviceName={proxy_config['service_name']}&fp=randomized&sni={domains['CDN_COMPAT_DOMAIN']}#{user_info['name']}%20[VLESS%20gRPC]"
+    )
 
+    # Hysteria2
     proxy_config = next((item for item in proxies if item["type"] == "HYSTERIA"))
     user_info["hysteria_url"] = (
-        f"hysteria2://{user_info['password']}@{domains['DIRECT_CONN_DOMAIN']}:8443/?obfs=salamander&obfs-password={proxy_config['obfs']}&sni={domains['DIRECT_CONN_DOMAIN']}#Hysteria"
+        f"hysteria2://{user_info['password']}@{domains['DIRECT_CONN_DOMAIN']}:8443/?obfs=salamander&obfs-password={proxy_config['obfs']}&sni={domains['DIRECT_CONN_DOMAIN']}#{user_info['name']}%20[Hysteria]"
     )
 
     return user_info
@@ -154,8 +139,8 @@ def print_client_info(username: str, rainb0w_users_file: str):
                     f"""\nShare urls for '{username}':
 
 [bold green]Hysteria:[/bold green] [white]{user['hysteria_url']}[/white]\n
-[bold green]VLESS (HTTPUpgrade):[/bold green] [white]{user['vless_httpupgrade_url']}[/white]\n
-[bold green]VMESS (Websocket):[/bold green] [white]{user['vmess_ws_url']}[/white]\n
+[bold green]VLESS (Websocket):[/bold green] [white]{user['vless_ws_url']}[/white]\n
+[bold green]VLESS (gRPC):[/bold green] [white]{user['vless_grpc_url']}[/white]\n
 
 [bold yellow]NOTE: DO NOT SHARE THESE INFORMATION OVER SMS,
 USE EMAILS OR OTHER SECURE WAYS OF COMMUNICATION INSTEAD![/bold yellow]""".lstrip()

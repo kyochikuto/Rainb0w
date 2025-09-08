@@ -23,20 +23,20 @@ def configure_nginx(rainb0w_config: dict, nginx_config_file: str):
         "DIRECT_CONN_DOMAIN", rainb0w_config["DOMAINS"]["DIRECT_CONN_DOMAIN"]
     )
 
-    # VLESS HTTPUpgrade
+    # VLESS Websocket
     proxy_config = next(
         (
             item
             for item in rainb0w_config["PROXY"]
-            if item["type"] == "VLESS_HTTPUPGRADE"
+            if item["type"] == "VLESS_WS"
         )
     )
-    nginx_config = nginx_config.replace("VLESS_HTTPUPGRADE_PATH", proxy_config["path"])
+    nginx_config = nginx_config.replace("VLESS_WS_PATH", proxy_config["path"])
 
-    # VMESS Websocket
+    # VLESS gRPC
     proxy_config = next(
-        (item for item in rainb0w_config["PROXY"] if item["type"] == "VMESS_WS")
+        (item for item in rainb0w_config["PROXY"] if item["type"] == "VLESS_GRPC")
     )
-    nginx_config = nginx_config.replace("VMESS_WS_PATH", proxy_config["path"])
+    nginx_config = nginx_config.replace("VLESS_GRPC_PATH", proxy_config["path"])
 
     save_conf(nginx_config, nginx_config_file)

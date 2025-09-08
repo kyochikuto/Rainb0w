@@ -25,8 +25,8 @@ if rainb0w_users:
                 f"""\nShare urls for '{user['name']}':
 
 [bold green]Hysteria:[/bold green] [white]{user['hysteria_url']}[/white]\n
-[bold green]VLESS (HTTPUpgrade):[/bold green] [white]{user['vless_httpupgrade_url']}[/white]\n
-[bold green]VMESS (Websocket):[/bold green] [white]{user['vmess_ws_url']}[/white]\n
+[bold green]VLESS (Websocket):[/bold green] [white]{user['vless_ws_url']}[/white]\n
+[bold green]VLESS (gRPC):[/bold green] [white]{user['vless_grpc_url']}[/white]\n
 
 [bold yellow]NOTE: DO NOT SHARE THESE INFORMATION OVER SMS,
 USE EMAILS OR OTHER SECURE WAYS OF COMMUNICATION INSTEAD![/bold yellow]""".lstrip()
