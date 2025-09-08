@@ -75,8 +75,8 @@ def prompt_direct_conn_domain():
 def prompt_cdn_domain() -> str:
     print(
         """Your CDN subdomain will be used for the following:
-    - VLESS HTTPUpgrade
-    - VMESS Websocket
+    - VLESS Websocket
+    - VLESS gRPC
     """
     )
     cdn_domain = input("\nEnter subdomain for CDN connections (e.g sub.example.com): ")
