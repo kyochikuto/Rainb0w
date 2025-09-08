@@ -183,16 +183,19 @@
                 "rule_set": [
                     "geosite-malware",
                     "geosite-phishing",
-                    "geosite-cryptominers"
+                    "geosite-cryptominers",
+                    "geoip-malware",
+                    "geoip-phishing"
                 ],
                 "action": "reject"
             },
             {
                 "rule_set": [
-                    "geoip-malware",
-                    "geoip-phishing"
+                    "geosite-ir",
+                    "geoip-ir"
                 ],
-                "action": "reject"
+                "action": "route",
+                "outbound": "warp-out"
             },
             {
                 "rule_set": [
