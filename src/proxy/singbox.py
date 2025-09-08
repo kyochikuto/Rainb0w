@@ -103,6 +103,10 @@ def disable_porn_dns_blocking(config_file_path: str):
     print("[bold green]>> Unblock Porn by DNS")
     change_dns_server("adguard-dns", config_file_path)
 
+def revert_to_local_dns(config_file_path: str):
+    print("[bold green]>> Reverting to local DNS servers")
+    change_dns_server("local-dns", config_file_path)
+
 
 def insert_warp_params(config_file_path: str, warp_conf_file: str):
     warp_conf = load_json(warp_conf_file)

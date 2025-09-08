@@ -16,7 +16,11 @@ from base.config import (
     RAINB0W_USERS_FILE,
     SINGBOX_CONFIG_FILE,
 )
-from proxy.singbox import disable_porn_dns_blocking, enable_porn_dns_blocking
+from proxy.singbox import (
+    disable_porn_dns_blocking,
+    enable_porn_dns_blocking,
+    revert_to_local_dns,
+)
 from user.user_manager import (
     add_user_to_proxies,
     create_new_user,
@@ -24,7 +28,6 @@ from user.user_manager import (
     print_client_info,
     remove_user,
 )
-from utils.ac_utils import is_porn_blocked
 from utils.helper import clear_screen, prompt_clear_screen
 from utils.os_utils import is_network_stack_tweaked, is_service_running, run_system_cmd
 
@@ -60,27 +63,35 @@ def performance_menu():
     dashboard()
 
 
-def access_controls_menu():
+def dns_controls_menu():
     global NEED_SERVICE_RESTART
 
     title = "Select any option:"
     options = [
-        "Unblock Porn" if is_porn_blocked() else "Block Porn",
+        "Set DNS to AdGuard DNS Ad Filtering",
+        "Set DNS to AdGuard DNS Family Protection",
+        "Set DNS to local server",
         "Back to Main Menu",
     ]
     option, _ = pick(options, title)
-    if option == "Block Porn":
+    if option == "Set DNS to AdGuard DNS Family Protection":
         NEED_SERVICE_RESTART = True
         enable_porn_dns_blocking(SINGBOX_CONFIG_FILE)
         sleep(1)
         clear_screen()
-        access_controls_menu()
-    elif option == "Unblock Porn":
+        dns_controls_menu()
+    elif option == "Set DNS to AdGuard DNS Ad Filtering":
         NEED_SERVICE_RESTART = True
         disable_porn_dns_blocking(SINGBOX_CONFIG_FILE)
         sleep(1)
         clear_screen()
-        access_controls_menu()
+        dns_controls_menu()
+    elif option == "Set DNS to local server":
+        NEED_SERVICE_RESTART = True
+        revert_to_local_dns(SINGBOX_CONFIG_FILE)
+        sleep(1)
+        clear_screen()
+        dns_controls_menu()
     dashboard()
 
 
@@ -219,7 +230,7 @@ def dashboard():
     title = """Choose any options to proceed:"""
     options = [
         "Performance Settings",
-        "Access Controls",
+        "DNS Controls",
         "Manage Users",
         "Backup",
         "Uninstall",
@@ -229,8 +240,8 @@ def dashboard():
     option, _ = pick(options, title)
     if option == "Performance Settings":
         performance_menu()
-    elif option == "Access Controls":
-        access_controls_menu()
+    elif option == "DNS Controls":
+        dns_controls_menu()
     elif option == "Manage Users":
         users_management_menu()
     elif option == "Backup":
