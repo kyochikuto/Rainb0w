@@ -71,7 +71,7 @@ def insert_proxy_params(proxy_params: list, config_file_path: str):
                 (item for item in proxy_params if item["type"] == "VLESS_WS")
             )
             inbound["transport"]["path"] = proxy_config["path"]
-            inbound["transport"]["host"] = proxy_config["host"]
+            inbound["transport"]["headers"]["Host"] = proxy_config["host"]
         elif inbound["tag"] == "HYSTERIA":
             proxy_config = next(
                 (item for item in proxy_params if item["type"] == "HYSTERIA")
