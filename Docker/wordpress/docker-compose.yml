@@ -1,38 +1,55 @@
 services:
-  mariadb:
-    image: mariadb:latest
-    container_name: mariadb
-    volumes:
-      - db:/var/lib/mysql
-      - /etc/localtime:/etc/localtime:ro
-    restart: unless-stopped
-    env_file:
-      - db.env
-    networks:
-      - proxy-tier
+    mariadb:
+        image: mariadb:latest
+        container_name: mariadb
+        volumes:
+            - db:/var/lib/mysql
+            - /etc/localtime:/etc/localtime:ro
+        restart: unless-stopped
+        env_file:
+            - db.env
+        networks:
+            - proxy-tier
 
-  wordpress:
-    depends_on:
-      - mariadb
-    image: wordpress
-    container_name: wordpress
-    restart: unless-stopped
-    networks:
-      - proxy-tier
-    expose:
-      - 80
-    volumes:
-      - wp_data:/var/www/html
-      - ./bootstrap.sh:/docker-entrypoint-initwp.d/bootstrap.sh:ro
-    env_file:
-      - wp.env
-    entrypoint: [ "bash", "/var/www/html/entrypoint.sh" ]
+    wordpress:
+        depends_on:
+            - mariadb
+        image: wordpress:latest
+        container_name: wordpress
+        restart: unless-stopped
+        networks:
+            - proxy-tier
+        expose:
+            - 80
+        volumes:
+            - wp_data:/var/www/html
+            - ./wp-content:/var/www/html/wp-content
+        env_file:
+            - wp.env
+
+    wp-cli:
+        image: wordpress:cli
+        container_name: wordpress_cli
+        restart: "no"
+        user: "33:33"
+        depends_on:
+            - wordpress
+            - mariadb
+        env_file:
+            - wp.env
+        volumes:
+            - wp_data:/var/www/html
+            - ./wp-content:/var/www/html/wp-content
+            - ./install-wordpress.sh:/install-wordpress.sh
+        networks:
+            - proxy-tier
+        entrypoint: ["sh", "/install-wordpress.sh"]
 
 volumes:
-  db:
-  wp_data:
+    db:
+    wp_data:
 
 
 networks:
-  proxy-tier:
-    external: true
+    proxy-tier:
+        external: true
