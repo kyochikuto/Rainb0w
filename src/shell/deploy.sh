@@ -16,9 +16,6 @@ source $PWD/src/shell/security/setup_firewall.sh
 domain=$(python3 $PWD/src/shell/helper/get_domain.py)
 source $PWD/src/shell/security/get_tls_certs.sh $domain
 
-fn_restart_docker_container "nginx"
-fn_restart_docker_container "sing-box"
-
 # Setup a fake WordPress blog if we have enough memory
 MEMORY_SIZE=$(free -m | awk '/Mem:/ { print $2 }')
 if [ $MEMORY_SIZE -gt 512 ]; then
@@ -35,6 +32,9 @@ else
     echo -e "${B_RED}Memory is insufficient to run a WordPress container, consider upgrading your server specs!"
     CONTAINERS=$(echo "$CONTAINERS" | sed 's/wordpress//g')
 fi
+
+fn_restart_docker_container "sing-box"
+fn_restart_docker_container "nginx"
 
 echo -e "\n\nYour proxies are ready now!\n"
 
