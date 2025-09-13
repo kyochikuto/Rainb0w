@@ -26,6 +26,11 @@ services:
             - ./wp-content:/var/www/html/wp-content
         env_file:
             - wp.env
+        logging:
+            driver: "json-file"
+            options:
+                max-size: "10m"     # rotate when log reaches 10MB
+                max-file: "3"       # keep at most 3 rotated log files
 
     wp-cli:
         image: wordpress:cli

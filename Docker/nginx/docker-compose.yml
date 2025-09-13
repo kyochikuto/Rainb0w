@@ -17,6 +17,11 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - ./etc/nginx.conf:/etc/nginx/nginx.conf
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"     # rotate when log reaches 10MB
+        max-file: "3"       # keep at most 3 rotated log files
 
 networks:
   web:

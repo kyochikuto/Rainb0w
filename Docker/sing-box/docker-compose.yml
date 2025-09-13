@@ -17,6 +17,11 @@ services:
           - /etc/localtime:/etc/localtime:ro
           - ./etc/sing-box.json:/etc/sing-box/config.json:ro
         command: "run -c /etc/sing-box/config.json"
+        logging:
+          driver: "json-file"
+          options:
+            max-size: "10m"     # rotate when log reaches 10MB
+            max-file: "3"       # keep at most 3 rotated log files
 
 networks:
   web:
