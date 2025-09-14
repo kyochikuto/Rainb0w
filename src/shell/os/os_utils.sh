@@ -27,7 +27,6 @@ function fn_install_required_packages() {
     fn_check_and_install_pkg dkms
     fn_check_and_install_pkg curl
     fn_check_and_install_pkg unzip
-    fn_check_and_install_pkg qrencode
     fn_check_and_install_pkg openssl
     fn_check_and_install_pkg bc
     fn_check_and_install_pkg logrotate
@@ -35,6 +34,7 @@ function fn_install_required_packages() {
     fn_check_and_install_pkg python3-pip
     fn_check_and_install_pkg python3-venv
     fn_check_and_install_pkg snapd
+    fn_check_and_install_pkg apache2-utils
 }
 
 function fn_activate_venv() {

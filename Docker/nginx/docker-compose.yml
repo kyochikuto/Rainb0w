@@ -17,6 +17,7 @@ services:
       - /etc/localtime:/etc/localtime:ro
       - /etc/letsencrypt:/etc/letsencrypt:ro
       - ./etc/nginx.conf:/etc/nginx/nginx.conf
+      - ./etc/.htpasswd:/etc/nginx/.htpasswd:ro
       - ./html:/var/www/html:ro
     logging:
       driver: "json-file"

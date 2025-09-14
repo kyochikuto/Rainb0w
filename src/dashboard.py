@@ -106,7 +106,7 @@ def user_info_menu(user: str):
     ]
     option, _ = pick(options, title)
     if option == "View Share URLs":
-        print_client_info(user, RAINB0W_USERS_FILE)
+        print_client_info(user, RAINB0W_USERS_FILE, RAINB0W_CONFIG_FILE)
         prompt_clear_screen()
     elif option == "Remove User":
         title = f"Confirm removing '{user}'?"

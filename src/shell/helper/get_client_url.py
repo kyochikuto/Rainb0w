@@ -22,11 +22,11 @@ if rainb0w_users:
     for user in rainb0w_users:
         if user["name"] == sys.argv[1]:
             print(
-                f"""\nShare urls for '{user['name']}':
+                f"""\nGet share urls for '{user['name']}' at:
 
-[bold green]Hysteria:[/bold green] [white]{user['hysteria_url']}[/white]\n
-[bold green]VLESS (Websocket):[/bold green] [white]{user['vless_ws_url']}[/white]\n
-[bold green]VLESS (gRPC):[/bold green] [white]{user['vless_grpc_url']}[/white]\n
+[bold green]URL:[/bold green] [white]https://{main_domain}/users/{user['date']}_{user['name']}.html[/white]
+[bold green]Username:[/bold green] [white]{user['name']}[/white]
+[bold green]Password:[/bold green] [white]{user['share_page_password']}[/white]\n
 
 [bold yellow]NOTE: DO NOT SHARE THESE INFORMATION OVER SMS,
 USE EMAILS OR OTHER SECURE WAYS OF COMMUNICATION INSTEAD![/bold yellow]""".lstrip()
