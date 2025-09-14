@@ -8,6 +8,7 @@ import sys
 from base.config import (
     CERTBOT_CF_SECRET_FILE,
     NGINX_CONFIG_FILE,
+    NGINX_WWW_DIR,
     RAINB0W_BACKUP_DIR,
     RAINB0W_CONFIG_FILE,
     RAINB0W_HOME_DIR,
@@ -26,7 +27,6 @@ from proxy.singbox import (
 from user.user_manager import add_user_to_proxies, create_new_user, prompt_username
 from utils.cf_utils import insert_cloudflare_api_key, prompt_cloudflare_api_key
 from utils.helper import (
-    gen_random_string,
     load_toml,
     print_txt_file,
     progress_indicator,
@@ -38,7 +38,7 @@ from utils.url_utils import (
     prompt_direct_conn_domain,
     prompt_main_domain,
 )
-from utils.wp_utils import wp_insert_params
+from utils.website_utils import download_html5up_sample
 
 
 def apply_config(username=None):
@@ -61,18 +61,11 @@ def apply_config(username=None):
     # Configure WARP endpoint
     insert_warp_params(SINGBOX_CONFIG_FILE, WARP_CONF_FILE)
 
+    # Static HTML website
+    download_html5up_sample(NGINX_WWW_DIR)
+
     # Configure NGINX
     configure_nginx(rainb0w_config, NGINX_CONFIG_FILE)
-
-    # WordPress
-    wp_insert_params(
-        rainb0w_config["DOMAINS"]["MAIN_DOMAIN"],
-        "My WordPress Blog",
-        gen_random_string(12),
-        gen_random_string(12),
-        f"{RAINB0W_HOME_DIR}/wordpress/wp.env",
-        f"{RAINB0W_HOME_DIR}/wordpress/db.env",
-    )
 
     # If this is a new Express/Custom STATUS, we need to create a default user
     # if it's a 'Restore' we will restore the existing users one by one

@@ -8,9 +8,11 @@ authors = [
 dependencies = [
     "PyYAML",
     "bcrypt",
+    "beautifulsoup4>=4.13.5",
     "pick",
     "psutil",
     "python-dotenv",
+    "qrcode[pil]>=7.4.2",
     "requests",
     "rich",
     "toml",

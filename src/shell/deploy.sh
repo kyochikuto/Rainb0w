@@ -16,23 +16,6 @@ source $PWD/src/shell/security/setup_firewall.sh
 domain=$(python3 $PWD/src/shell/helper/get_domain.py)
 source $PWD/src/shell/security/get_tls_certs.sh $domain
 
-# Setup a fake WordPress blog if we have enough memory
-MEMORY_SIZE=$(free -m | awk '/Mem:/ { print $2 }')
-if [ $MEMORY_SIZE -gt 512 ]; then
-    fn_restart_docker_container "wordpress"
-    echo -e "\nWordPress admin area credentials:"
-    WP_ADMIN=$(grep -w 'WORDPRESS_ADMIN_USER' $HOME/Rainb0w_Home/wordpress/wp.env | cut -d= -f2)
-    WP_ADMIN=${WP_ADMIN//\'/}
-    WP_PASSWORD=$(grep -w 'WORDPRESS_ADMIN_PASSWORD' $HOME/Rainb0w_Home/wordpress/wp.env | cut -d= -f2)
-    WP_PASSWORD=${WP_PASSWORD//\'/}
-    echo -e "WP Admin URL:  ${B_BLUE}https://YOUR_MAIN_DOMAIN/wp-admin ${RESET}"
-    echo -e "WP Username:   ${B_GREEN}$WP_ADMIN${RESET}"
-    echo -e "WP Password:   ${B_GREEN}$WP_PASSWORD${RESET}"
-else
-    echo -e "${B_RED}Memory is insufficient to run a WordPress container, consider upgrading your server specs!"
-    CONTAINERS=$(echo "$CONTAINERS" | sed 's/wordpress//g')
-fi
-
 fn_restart_docker_container "sing-box"
 fn_restart_docker_container "nginx"
 

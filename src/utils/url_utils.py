@@ -30,7 +30,7 @@ def extract_domain(domain: str) -> str:
 
 def prompt_main_domain() -> str:
     print(
-        "This will be used to setup a dummy WordPress blog to offer to active probers."
+        "This will be used to setup a static HTML blog to offer to active probers and host proxy share link pages."
     )
     main_domain = input("\nEnter your decoy domain (e.g example.com): ")
     while not (

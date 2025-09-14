@@ -11,7 +11,7 @@ and it requires the following in order to proceed:
         to your server such as [Hysteria]
 
     (B). A subdomain to use for protocols that are compatible with CDNs
-        such as [Websocket, HTTPUpgrade, gRPC], using this setup you can turn on CDN routing
+        such as [Websocket, gRPC], using this setup you can turn on CDN routing
         for these protocols when your IP is blocked without affecting your other proxies and
         without requiring any change on the client side.
 
