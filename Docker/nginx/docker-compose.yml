@@ -27,6 +27,8 @@ services:
 
 networks:
   web:
+    enable_ipv6: true
     external: true
   proxy-tier:
+    enable_ipv6: true
     external: true
