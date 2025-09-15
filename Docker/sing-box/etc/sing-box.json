@@ -164,6 +164,17 @@
             },
             {
                 "type": "inline",
+                "tag": "gfw",
+                "rules": [
+                    {
+                        "ip_cidr": [
+                            "10.10.34.0/24"
+                        ]
+                    }
+                ]
+            },
+            {
+                "type": "inline",
                 "tag": "youtube",
                 "rules": [
                     {
@@ -190,7 +201,8 @@
                     "geosite-phishing",
                     "geosite-cryptominers",
                     "geoip-malware",
-                    "geoip-phishing"
+                    "geoip-phishing",
+                    "gfw"
                 ],
                 "action": "reject"
             },
