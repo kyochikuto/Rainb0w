@@ -68,19 +68,19 @@ def dns_controls_menu():
 
     title = "Select any option:"
     options = [
-        "Set DNS to AdGuard DNS Ad Filtering",
-        "Set DNS to AdGuard DNS Family Protection",
+        "Set DNS to Cloudflare DNS Malware Protection",
+        "Set DNS to Cloudflare DNS Family Protection",
         "Set DNS to local server",
         "Back to Main Menu",
     ]
     option, _ = pick(options, title)
-    if option == "Set DNS to AdGuard DNS Family Protection":
+    if option == "Set DNS to Cloudflare DNS Family Protection":
         NEED_SERVICE_RESTART = True
         enable_porn_dns_blocking(SINGBOX_CONFIG_FILE)
         sleep(1)
         clear_screen()
         dns_controls_menu()
-    elif option == "Set DNS to AdGuard DNS Ad Filtering":
+    elif option == "Set DNS to Cloudflare DNS Malware Protection":
         NEED_SERVICE_RESTART = True
         disable_porn_dns_blocking(SINGBOX_CONFIG_FILE)
         sleep(1)

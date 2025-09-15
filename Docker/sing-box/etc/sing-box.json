@@ -11,15 +11,15 @@
                 "type": "local"
             },
             {
-                "tag": "adguard-dns",
+                "tag": "cloudflare-dns",
                 "type": "udp",
-                "server": "94.140.14.14",
+                "server": "1.1.1.2",
                 "server_port": 53
             },
             {
-                "tag": "adguard-dns-family",
+                "tag": "cloudflare-dns-family",
                 "type": "udp",
-                "server": "94.140.14.15",
+                "server": "1.1.1.3",
                 "server_port": 53
             }
         ],
@@ -32,7 +32,7 @@
                 "server": "local-dns"
             }
         ],
-        "final": "adguard-dns"
+        "final": "cloudflare-dns"
     },
     "inbounds": [
         {

@@ -96,12 +96,12 @@ def change_dns_server(dns_tag: str, config_file_path: str):
 
 def enable_porn_dns_blocking(config_file_path: str):
     print("[bold green]>> Block Porn by DNS")
-    change_dns_server("adguard-dns-family", config_file_path)
+    change_dns_server("cloudflare-dns-family", config_file_path)
 
 
 def disable_porn_dns_blocking(config_file_path: str):
     print("[bold green]>> Unblock Porn by DNS")
-    change_dns_server("adguard-dns", config_file_path)
+    change_dns_server("cloudflare-dns", config_file_path)
 
 def revert_to_local_dns(config_file_path: str):
     print("[bold green]>> Reverting to local DNS servers")
