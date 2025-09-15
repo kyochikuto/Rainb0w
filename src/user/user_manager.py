@@ -154,7 +154,7 @@ def print_client_info(username: str, rainb0w_users_file: str, rainb0w_config_fil
                 print(
                     f"""\nGet share urls for '{username}' at:
 
-[bold green]URL:[/bold green] [white]https://{rainb0w_config['MAIN_DOMAIN']}/users/{user['date']}_{user['name']}.html[/white]
+[bold green]URL:[/bold green] [white]https://{rainb0w_config["DOMAINS"]["MAIN_DOMAIN"]}/users/{user['date']}_{user['name']}.html[/white]
 [bold green]Username:[/bold green] [white]{user['name']}[/white]
 [bold green]Password:[/bold green] [white]{user['share_page_password']}[/white]\n
 
