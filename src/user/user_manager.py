@@ -75,7 +75,7 @@ def add_share_urls(
     )
     vless_path = f"{proxy_config['path']}"
     user_info["vless_ws_url"] = (
-        f"vless://{user_info['uuid']}@{domains['CDN_COMPAT_DOMAIN']}:443?security=tls&encryption=none&alpn=http/1.1&host={proxy_config['host']}&path={safe_url_encode(vless_path)}&type=ws&fp=chrome&fragment=tlshello%2C100-200%2C1-2&sni={domains['CDN_COMPAT_DOMAIN']}#{user_info['name']}%20[VLESS%20Websocket]"
+        f"vless://{user_info['uuid']}@{domains['CDN_COMPAT_DOMAIN']}:443?security=tls&encryption=none&alpn=http/1.1&host={proxy_config['host']}&path={safe_url_encode(vless_path)}&type=ws&fp=chrome&fragment=50-100,1-2,tlshello&sni={domains['CDN_COMPAT_DOMAIN']}#{user_info['name']}%20[VLESS%20Websocket]"
     )
 
     # VLESS gRPC
@@ -83,7 +83,7 @@ def add_share_urls(
         (item for item in proxies if item["type"] == "VLESS_GRPC")
     )
     user_info["vless_grpc_url"] = (
-        f"vless://{user_info['uuid']}@{domains['CDN_COMPAT_DOMAIN']}:443?mode=gun&security=tls&encryption=none&alpn=h2,http/1.1&type=grpc&serviceName={proxy_config['service_name']}&fp=chrome&sni={domains['CDN_COMPAT_DOMAIN']}#{user_info['name']}%20[VLESS%20gRPC]"
+        f"vless://{user_info['uuid']}@{domains['CDN_COMPAT_DOMAIN']}:443?mode=gun&security=tls&encryption=none&alpn=h2,http/1.1&type=grpc&serviceName={proxy_config['service_name']}&fp=chrome&fragment=50-100,1-2,tlshello&sni={domains['CDN_COMPAT_DOMAIN']}#{user_info['name']}%20[VLESS%20gRPC]"
     )
 
     # Hysteria2
