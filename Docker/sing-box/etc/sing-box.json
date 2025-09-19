@@ -54,7 +54,8 @@
                 "certificate_path": "",
                 "key_path": ""
             },
-            "ignore_client_bandwidth": true,
+            "ignore_client_bandwidth": false,
+            "udp_fragment": false,
             "masquerade": "https://YOUR_MAIN_DOMAIN"
         },
         {
