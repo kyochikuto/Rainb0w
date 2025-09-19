@@ -167,20 +167,6 @@
             },
             {
                 "type": "inline",
-                "tag": "local-ips",
-                "rules": [
-                    {
-                        "ip_cidr": [
-                            "0.0.0.0/32",
-                            "10.0.0.0/8",
-                            "172.16.0.0/12",
-                            "192.168.0.0/16"
-                        ]
-                    }
-                ]
-            },
-            {
-                "type": "inline",
                 "tag": "youtube",
                 "rules": [
                     {
@@ -202,14 +188,22 @@
         ],
         "rules": [
             {
-                "rule_set": [
-                    "geosite-malware",
-                    "geosite-phishing",
-                    "geosite-cryptominers",
-                    "geoip-malware",
-                    "geoip-phishing",
-                    "local-ips"
+                "rules": [
+                    {
+                        "rule_set": [
+                            "geosite-malware",
+                            "geosite-phishing",
+                            "geosite-cryptominers",
+                            "geoip-malware",
+                            "geoip-phishing"
+                        ]
+                    },
+                    {
+                        "ip_is_private": true
+                    }
                 ],
+                "type": "logical",
+                "mode": "or",
                 "action": "reject"
             },
             {
