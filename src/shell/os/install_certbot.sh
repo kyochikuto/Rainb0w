@@ -17,7 +17,7 @@ if [ $IS_SNAP_INSTALLED = true ]; then
     chmod 600 ~/.secrets/certbot/cloudflare.ini
 
     mkdir -p /etc/letsencrypt/renewal-hooks/post/
-    echo -e '#!/bin/sh\ndocker restart nginx\ndocker restart sing-box' > /etc/letsencrypt/renewal-hooks/post/restart-docker-containers.sh
+    echo -e '#!/bin/sh\ndocker restart caddy\ndocker restart sing-box' > /etc/letsencrypt/renewal-hooks/post/restart-docker-containers.sh
     chmod +x /etc/letsencrypt/renewal-hooks/post/restart-docker-containers.sh
 
     echo -e "${B_GREEN}<< Certbot is now installed! >>${RESET}"

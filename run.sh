@@ -87,7 +87,7 @@ function clear_and_copy_files() {
 
 function installer_menu() {
     echo -ne "
-Rainb0w Proxy Installer v${VERSION}
+Rainb0w Proxy Installer
 [github.com/kyochikuto]
 
 Install: Setup new proxies

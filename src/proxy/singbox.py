@@ -10,7 +10,7 @@ def insert_tls_cert_path(main_domain: str, config_file_path: str):
     if is_subdomain(main_domain):
         main_domain = extract_domain(main_domain)
 
-    # We only need TLS config for Hysteria, TCP inbounds recv cleartext traffic from NGINX reverse proxy
+    # We only need TLS config for Hysteria, TCP inbounds recv cleartext traffic from Caddy reverse proxy
     for inbound in proxy_config["inbounds"]:
         if inbound["tag"] == "HYSTERIA":
             cert_path = f"{TLS_CERTS_DIR}/{main_domain}/fullchain.pem"

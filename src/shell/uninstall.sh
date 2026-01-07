@@ -5,6 +5,7 @@ echo -e "${B_GREEN}>> Stopping and removing Docker containers${RESET}"
 docker ps -aq | xargs docker stop | xargs docker rm
 docker network remove web
 docker network remove proxy-tier
+docker volume remove sockets
 echo -e "${B_GREEN}>> Removing files${RESET}"
 rm -rf $HOME/Rainb0w_Home
 

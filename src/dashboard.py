@@ -106,7 +106,7 @@ def user_info_menu(user: str):
     ]
     option, _ = pick(options, title)
     if option == "View Share URLs":
-        print_client_info(user, RAINB0W_USERS_FILE, RAINB0W_CONFIG_FILE)
+        print_client_info(user, RAINB0W_USERS_FILE)
         prompt_clear_screen()
     elif option == "Remove User":
         title = f"Confirm removing '{user}'?"
@@ -114,11 +114,7 @@ def user_info_menu(user: str):
         option, _ = pick(options, title)
         if option == "Yes":
             NEED_SERVICE_RESTART = True
-            remove_user(
-                user,
-                RAINB0W_USERS_FILE,
-                SINGBOX_CONFIG_FILE
-            )
+            remove_user(user, RAINB0W_USERS_FILE, SINGBOX_CONFIG_FILE)
             clear_screen()
         else:
             user_info_menu(user)
@@ -154,7 +150,7 @@ def users_management_menu():
                     user_info,
                     RAINB0W_CONFIG_FILE,
                     RAINB0W_USERS_FILE,
-                    SINGBOX_CONFIG_FILE
+                    SINGBOX_CONFIG_FILE,
                 )
                 print(
                     "Changes only take effect after selecting 'Apply Changes' in the dashboard!"

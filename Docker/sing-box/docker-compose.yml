@@ -1,27 +1,27 @@
 services:
-    sing-box:
-        image: ghcr.io/sagernet/sing-box:latest
-        container_name: sing-box
-        restart: unless-stopped
-        networks:
-          - web
-          - proxy-tier
-        expose:
-          - "9443"
-          - "9444"
-        ports:
-          - "8443:8443/udp"
-        volumes:
-          - /etc/letsencrypt:/etc/letsencrypt:ro
-          - /var/log:/var/log/:rw
-          - /etc/localtime:/etc/localtime:ro
-          - ./etc/sing-box.json:/etc/sing-box/config.json:ro
-        command: "run -c /etc/sing-box/config.json"
-        logging:
-          driver: "json-file"
-          options:
-            max-size: "10m"     # rotate when log reaches 10MB
-            max-file: "3"       # keep at most 3 rotated log files
+  sing-box:
+    image: ghcr.io/sagernet/sing-box:latest
+    container_name: sing-box
+    restart: unless-stopped
+    networks:
+      - web
+      - proxy-tier
+    expose:
+      - "9443"
+      - "9444"
+    ports:
+      - "8443:8443/udp"
+    volumes:
+      - /etc/letsencrypt:/etc/letsencrypt:ro
+      - /var/log:/var/log/:rw
+      - /etc/localtime:/etc/localtime:ro
+      - ./etc/config.json:/etc/sing-box/config.json:ro
+    command: "run -c /etc/sing-box/config.json"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m" # rotate when log reaches 10MB
+        max-file: "3" # keep at most 3 rotated log files
 
 networks:
   web:
@@ -30,5 +30,3 @@ networks:
   proxy-tier:
     enable_ipv6: true
     external: true
-
-

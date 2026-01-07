@@ -10,3 +10,8 @@ if ! docker network list | awk '{print $2}' | grep -q '^proxy-tier$'; then
     echo -e "${B_GREEN}>> Creating a Docker network for proxies ${RESET}"
     docker network create --ipv6 proxy-tier >/dev/null
 fi
+
+if ! docker volume list | awk '{print $2}' | grep -q '^sockets$'; then
+    echo -e "${B_GREEN}>> Creating shared Docker volume for UNIX sockets ${RESET}"
+    docker volume create sockets >/dev/null
+fi

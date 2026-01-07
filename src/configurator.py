@@ -1,14 +1,13 @@
 #!/usr/bin/env python3
-
 import os
 import shutil
 import signal
 import sys
 
 from base.config import (
+    CADDY_CONFIG_FILE,
+    CADDY_HTML_DIR,
     CERTBOT_CF_SECRET_FILE,
-    NGINX_CONFIG_FILE,
-    NGINX_WWW_DIR,
     RAINB0W_BACKUP_DIR,
     RAINB0W_CONFIG_FILE,
     RAINB0W_HOME_DIR,
@@ -16,7 +15,7 @@ from base.config import (
     SINGBOX_CONFIG_FILE,
     WARP_CONF_FILE,
 )
-from proxy.nginx import configure_nginx
+from proxy.caddy import configure_caddy
 from proxy.singbox import (
     gen_cdn_proxy_params,
     gen_hysteria_proxy_params,
@@ -62,10 +61,10 @@ def apply_config(username=None):
     insert_warp_params(SINGBOX_CONFIG_FILE, WARP_CONF_FILE)
 
     # Static HTML website
-    download_html5up_sample(NGINX_WWW_DIR)
+    download_html5up_sample(CADDY_HTML_DIR)
 
-    # Configure NGINX
-    configure_nginx(rainb0w_config, NGINX_CONFIG_FILE)
+    # Configure Caddy
+    configure_caddy(rainb0w_config, CADDY_CONFIG_FILE)
 
     # If this is a new Express/Custom STATUS, we need to create a default user
     # if it's a 'Restore' we will restore the existing users one by one

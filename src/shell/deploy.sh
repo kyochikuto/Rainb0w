@@ -16,8 +16,18 @@ source $PWD/src/shell/security/setup_firewall.sh
 domain=$(python3 $PWD/src/shell/helper/get_domain.py)
 source $PWD/src/shell/security/get_tls_certs.sh $domain
 
+if [ ! "$(docker images -q caddy)" ]; then
+    docker buildx build --tag caddy $HOME/Rainb0w_Home/caddy/
+    if [ ! "$(docker images -q caddy)" ]; then
+        echo -e "${B_RED}There was an issue when building a Docker image for 'Caddy', check the logs!${RESET}"
+        echo -e "${B_YELLOW}After resolving the issue, run the installer again.${RESET}"
+        rm -rf $HOME/Rainb0w_Home
+        exit
+    fi
+fi
+
 fn_restart_docker_container "sing-box"
-fn_restart_docker_container "nginx"
+fn_restart_docker_container "caddy"
 
 echo -e "\n\nYour proxies are ready now!\n"
 
