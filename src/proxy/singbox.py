@@ -5,13 +5,11 @@ from utils.helper import gen_random_string, load_json, save_json
 from utils.url_utils import extract_domain, is_subdomain
 
 
-def insert_tls_cert_path(
-    main_domain: str,  config_file_path: str
-):
+def insert_tls_cert_path(main_domain: str, config_file_path: str):
     proxy_config = load_json(config_file_path)
     if is_subdomain(main_domain):
         main_domain = extract_domain(main_domain)
-        
+
     # We only need TLS config for Hysteria, TCP inbounds recv cleartext traffic from NGINX reverse proxy
     for inbound in proxy_config["inbounds"]:
         if inbound["tag"] == "HYSTERIA":
@@ -96,12 +94,13 @@ def change_dns_server(dns_tag: str, config_file_path: str):
 
 def enable_porn_dns_blocking(config_file_path: str):
     print("[bold green]>> Block Porn by DNS")
-    change_dns_server("cloudflare-dns-family", config_file_path)
+    change_dns_server("adguard-dns-family", config_file_path)
 
 
 def disable_porn_dns_blocking(config_file_path: str):
     print("[bold green]>> Unblock Porn by DNS")
-    change_dns_server("cloudflare-dns", config_file_path)
+    change_dns_server("adguard-dns", config_file_path)
+
 
 def revert_to_local_dns(config_file_path: str):
     print("[bold green]>> Reverting to local DNS servers")
