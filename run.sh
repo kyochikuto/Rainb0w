@@ -20,8 +20,8 @@ else
     # Version check
     if [[ "$DISTRO" =~ "Ubuntu" ]]; then
         case "$DISTRO_VERSION" in
-            "20.04"|"22.04"|"24.04") ;;
-            *) echo "Your version of Ubuntu is not supported Only 20.04, 22.04, and 24.04 versions are supported."
+            "22.04"|"24.04"|"26.04") ;;
+            *) echo "Your version of Ubuntu is not supported, minimum supported version is 22.04."
                 exit 0
                 ;;
         esac
