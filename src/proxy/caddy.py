@@ -50,7 +50,7 @@ def configure_caddy(rainb0w_config: dict, caddy_config_file: str):
 
     # VLESS WS
     proxy_config = next(
-        (item for item in rainb0w_config["PROXY"] if item["type"] == "VLESS_WS")
+        item for item in rainb0w_config["PROXY"] if item["type"] == "VLESS_WS"
     )
     caddy_config["apps"]["http"]["servers"]["fallback"]["routes"][0]["handle"][0][
         "routes"
@@ -58,7 +58,7 @@ def configure_caddy(rainb0w_config: dict, caddy_config_file: str):
 
     # VLESS gRPC
     proxy_config = next(
-        (item for item in rainb0w_config["PROXY"] if item["type"] == "VLESS_GRPC")
+        item for item in rainb0w_config["PROXY"] if item["type"] == "VLESS_GRPC"
     )
     caddy_config["apps"]["http"]["servers"]["fallback"]["routes"][0]["handle"][0][
         "routes"

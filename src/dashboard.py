@@ -1,9 +1,9 @@
-#!/usr/bin/env python3
-
+from __future__ import annotations
 
 import os
 import re
 import shutil
+import sys
 from time import sleep
 from typing import List
 
@@ -129,7 +129,7 @@ def users_management_menu():
         "Back to Main Menu",
     ]
     # If we have existing users, display a numbered list of them in the menu
-    usernames: List[str] = []
+    usernames: list[str] = []
     users = get_users(RAINB0W_USERS_FILE)
     if users:
         for idx, user in enumerate(users):
@@ -199,7 +199,7 @@ Do you confirm?
     if option == "OKAY":
         run_system_cmd([f"{os.getcwd()}/src/shell/uninstall.sh"])
         prompt_clear_screen()
-        exit(0)
+        sys.exit(0)
     else:
         dashboard()
 
@@ -222,7 +222,7 @@ Do you want to continue?
 
 
 def dashboard():
-    global NEED_SERVICE_RESTART
+    global NEED_SERVICE_RESTART  # noqa: PLW0602
     title = """Choose any options to proceed:"""
     options = [
         "Performance Settings",
@@ -250,10 +250,10 @@ def dashboard():
         clear_screen()
         print("Applying Changes!")
         # We let the parent bash process handle the rest
-        exit(1)
+        sys.exit(1)
     elif option == "Exit":
         print("Exiting!")
-        exit(0)
+        sys.exit(0)
 
 
 if __name__ == "__main__":

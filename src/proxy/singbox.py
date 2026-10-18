@@ -61,18 +61,18 @@ def insert_proxy_params(proxy_params: list, config_file_path: str):
     for inbound in config["inbounds"]:
         if inbound["tag"] == "VLESS_GRPC":
             proxy_config = next(
-                (item for item in proxy_params if item["type"] == "VLESS_GRPC")
+                item for item in proxy_params if item["type"] == "VLESS_GRPC"
             )
             inbound["transport"]["service_name"] = proxy_config["service_name"]
         elif inbound["tag"] == "VLESS_WS":
             proxy_config = next(
-                (item for item in proxy_params if item["type"] == "VLESS_WS")
+                item for item in proxy_params if item["type"] == "VLESS_WS"
             )
             inbound["transport"]["path"] = proxy_config["path"]
             inbound["transport"]["headers"]["Host"] = proxy_config["host"]
         elif inbound["tag"] == "HYSTERIA":
             proxy_config = next(
-                (item for item in proxy_params if item["type"] == "HYSTERIA")
+                item for item in proxy_params if item["type"] == "HYSTERIA"
             )
             inbound["obfs"]["password"] = proxy_config["obfs"]
             inbound["masquerade"] = proxy_config["masquerade"]

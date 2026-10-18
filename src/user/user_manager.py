@@ -57,20 +57,20 @@ def add_share_urls(
     proxies = rainb0w_config["PROXY"]
 
     # VLESS Websocket
-    proxy_config = next((item for item in proxies if item["type"] == "VLESS_WS"))
+    proxy_config = next(item for item in proxies if item["type"] == "VLESS_WS")
     vless_path = f"{proxy_config['path']}"
     user_info["vless_ws_url"] = (
         f"vless://{user_info['uuid']}@{domains['CDN_COMPAT_DOMAIN']}:443?security=tls&encryption=none&alpn=http/1.1&host={proxy_config['host']}&path={safe_url_encode(vless_path)}&type=ws&fp=firefox&sni={domains['CDN_COMPAT_DOMAIN']}#{user_info['name']}%20[VLESS%20Websocket]"
     )
 
     # VLESS gRPC
-    proxy_config = next((item for item in proxies if item["type"] == "VLESS_GRPC"))
+    proxy_config = next(item for item in proxies if item["type"] == "VLESS_GRPC")
     user_info["vless_grpc_url"] = (
         f"vless://{user_info['uuid']}@{domains['CDN_COMPAT_DOMAIN']}:443?mode=gun&security=tls&encryption=none&alpn=h2,http/1.1&type=grpc&serviceName={proxy_config['service_name']}&fp=firefox&sni={domains['CDN_COMPAT_DOMAIN']}#{user_info['name']}%20[VLESS%20gRPC]"
     )
 
     # Hysteria2
-    proxy_config = next((item for item in proxies if item["type"] == "HYSTERIA"))
+    proxy_config = next(item for item in proxies if item["type"] == "HYSTERIA")
     user_info["hysteria_url"] = (
         f"hysteria2://{user_info['password']}@{domains['DIRECT_CONN_DOMAIN']}:8443/?obfs=salamander&obfs-password={proxy_config['obfs']}&sni={domains['DIRECT_CONN_DOMAIN']}#{user_info['name']}%20[Hysteria]"
     )

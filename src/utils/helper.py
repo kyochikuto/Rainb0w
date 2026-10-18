@@ -16,10 +16,10 @@ import yaml
 def load_conf(conf_file: str):
     with open(conf_file, mode="+r") as f:
         return f.read()
-    
+
 def save_conf(data, conf_file: str):
     with open(conf_file, mode="w") as f:
-        f.write(data)  
+        f.write(data)
 
 def load_json(json_file: str):
     with open(json_file, mode="+r") as f:
@@ -54,10 +54,7 @@ def save_toml(data, toml_file: str):
 def is_string_in_file(file_path: str, string_to_search: str):
     with open(file_path, "r") as f:
         file_content = f.read()
-        if string_to_search in file_content:
-            return True
-        else:
-            return False
+        return string_to_search in file_content
 
 
 def get_public_ip():

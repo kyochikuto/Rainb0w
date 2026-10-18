@@ -4,21 +4,18 @@ import urllib.parse
 
 def is_domain(domain: str) -> bool:
     regex = r"^[a-zA-Z0-9][a-zA-Z0-9\-]{1,61}[a-zA-Z0-9]\.[a-zA-Z]{2,}$"
-    if re.search(regex, domain):
-        return True
-    else:
-        return False
+    return bool(re.search(regex, domain))
 
 
 def is_subdomain(input: str) -> bool:
     pattern = r"(.*)\.(.*)\.(.*)"
-    return True if re.match(pattern, input) else False
+    return bool(re.match(pattern, input))
 
 
 def is_free_domain(domain: str) -> bool:
     # Regex for domain names ending in .gq, .cf, .ml, .tk, or .ga
     regex = r"[\w-]+\.(gq|cf|ml|tk|ga)$"
-    return True if re.search(regex, domain) else False
+    return bool(re.search(regex, domain))
 
 
 def extract_domain(domain: str) -> str:

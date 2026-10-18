@@ -1,4 +1,3 @@
-#!/usr/bin/env python3
 import os
 import shutil
 import signal
@@ -85,7 +84,7 @@ def apply_config(username=None):
                 SINGBOX_CONFIG_FILE,
             )
 
-    exit(0)
+    sys.exit(0)
 
 
 def configure():
@@ -147,7 +146,7 @@ def restore_config():
             f"Please copy your backup files to \
                     '{RAINB0W_BACKUP_DIR}' and run the installer again!"
         )
-        exit(1)
+        sys.exit(1)
 
 
 def main():
@@ -158,10 +157,10 @@ def main():
             restore_config()
         else:
             print("Unknown installation type passed! Exiting!")
-            exit(1)
+            sys.exit(1)
     else:
         print("Not enough args passed! Exiting!")
-        exit(1)
+        sys.exit(1)
 
 
 def signal_handler(sig, frame):

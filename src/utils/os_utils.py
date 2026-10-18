@@ -1,8 +1,10 @@
+from __future__ import annotations
+
 import subprocess
 from typing import List
 
 
-def run_system_cmd(cmd: List[str]):
+def run_system_cmd(cmd: list[str]):
     # Start the subprocess
     process = subprocess.Popen(
         cmd,
@@ -41,7 +43,7 @@ def get_sysctl_value(name):
 
 def is_network_stack_tweaked():
     return (
-        True if get_sysctl_value("net.ipv4.tcp_congestion_control") == "bbr" else False
+        get_sysctl_value("net.ipv4.tcp_congestion_control") == "bbr"
     )
 
 
