@@ -21,38 +21,64 @@
         "type": "udp",
         "server": "94.140.14.15",
         "server_port": 53
+      },
+      {
+        "tag": "hosts",
+        "type": "hosts",
+        "predefined": {
+          "cloudflare-dns.com": "104.18.95.41",
+          "mozilla.cloudflare-dns.com": "104.18.95.41",
+          "dns.google": "8.8.8.8",
+          "one.one.one.one": "1.1.1.1",
+          "adguard-dns.com": "94.140.14.14"
+        }
       }
     ],
     "rules": [
       {
-        "domain_suffix": [".ir"],
-        "action": "route",
-        "server": "local-dns"
+        "domain_regex": [
+          "(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+adguard-dns\\.com",
+          "(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?\\.)+cloudflare-dns\\.com"
+        ],
+        "server": "hosts"
+      },
+      {
+        "domain": [
+          "dns.google",
+          "one.one.one.one",
+          "cloudflare-dns.com",
+          "adguard-dns.com"
+        ],
+        "server": "hosts"
       }
     ],
-    "final": "adguard-dns"
+    "final": "adguard-dns",
+    "strategy": "ipv4_only",
+    "cache_capacity": 8192,
+    "reverse_mapping": true
   },
   "inbounds": [
     {
-      "tag": "HYSTERIA",
-      "type": "hysteria2",
+      "tag": "REALITY",
+      "type": "vless",
       "listen": "::",
-      "listen_port": 8443,
-      "obfs": {
-        "type": "salamander",
-        "password": ""
-      },
+      "listen_port": 443,
+      "tcp_multi_path": true,
+      "tcp_fast_open": true,
       "users": [],
       "tls": {
         "enabled": true,
-        "alpn": ["h3"],
-        "min_version": "1.3",
-        "certificate_path": "",
-        "key_path": ""
-      },
-      "ignore_client_bandwidth": false,
-      "udp_fragment": false,
-      "masquerade": "https://YOUR_MAIN_DOMAIN"
+        "server_name": "",
+        "reality": {
+          "enabled": true,
+          "handshake": {
+            "server": "",
+            "server_port": 443
+          },
+          "private_key": "",
+          "short_id": []
+        }
+      }
     },
     {
       "tag": "VLESS_WS",
@@ -234,18 +260,25 @@
     ],
     "rules": [
       {
+        "action": "sniff"
+      },
+      {
+        "type": "logical",
+        "mode": "or",
+        "rules": [
+          {
+            "protocol": "dns"
+          },
+          {
+            "port": 53
+          }
+        ],
+        "action": "hijack-dns"
+      },
+      {
         "action": "resolve",
         "server": "adguard-dns",
-        "strategy": "prefer_ipv4"
-      },
-      {
-        "action": "sniff",
-        "sniffer": ["http", "tls", "quic", "dns"],
-        "timeout": "1s"
-      },
-      {
-        "protocol": "dns",
-        "action": "hijack-dns"
+        "strategy": "ipv4_only"
       },
       {
         "rule_set": ["dns-servers"],
@@ -253,7 +286,7 @@
         "outbound": "direct"
       },
       {
-        "protocol": ["quic", "bittorrent"],
+        "protocol": ["bittorrent"],
         "action": "reject"
       },
       {
@@ -268,9 +301,6 @@
               "adguard",
               "nxdomains"
             ]
-          },
-          {
-            "ip_is_private": true
           }
         ],
         "type": "logical",
@@ -278,14 +308,13 @@
         "action": "reject"
       },
       {
+        "ip_is_private": true,
+        "outbound": "direct"
+      },
+      {
         "rule_set": ["geosite-ir", "geoip-ir"],
         "action": "route",
         "outbound": "warp-out"
-      },
-      {
-        "rule_set": ["youtube"],
-        "action": "route",
-        "outbound": "direct"
       }
     ],
     "default_domain_resolver": {

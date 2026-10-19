@@ -10,9 +10,8 @@ services:
       - "9443"
       - "9444"
     ports:
-      - "8443:8443/udp"
+      - "8080:8080"
     volumes:
-      - /etc/letsencrypt:/etc/letsencrypt:ro
       - /var/log:/var/log/:rw
       - /etc/localtime:/etc/localtime:ro
       - ./etc/config.json:/etc/sing-box/config.json:ro
@@ -25,8 +24,6 @@ services:
 
 networks:
   web:
-    enable_ipv6: true
     external: true
   proxy-tier:
-    enable_ipv6: true
     external: true

@@ -31,10 +31,10 @@ def configure_caddy(rainb0w_config: dict, caddy_config_file: str):
             f"*.{rainb0w_config['DOMAINS']['MAIN_DOMAIN']}",
         ]
         caddy_config["apps"]["tls"]["certificates"]["load_files"][0]["certificate"] = (
-            f"/etc/letsencrypt/live/{rainb0w_config['DOMAINS']['MAIN_DOMAIN']}/cert.pem"
+            f"/etc/ssl/cloudflare/{rainb0w_config['DOMAINS']['MAIN_DOMAIN']}.crt"
         )
         caddy_config["apps"]["tls"]["certificates"]["load_files"][0]["key"] = (
-            f"/etc/letsencrypt/live/{rainb0w_config['DOMAINS']['MAIN_DOMAIN']}/privkey.pem"
+            f"/etc/ssl/cloudflare/{rainb0w_config['DOMAINS']['MAIN_DOMAIN']}.key"
         )
     elif is_subdomain(rainb0w_config["DOMAINS"]["MAIN_DOMAIN"]):
         main_domain = extract_domain(rainb0w_config["DOMAINS"]["MAIN_DOMAIN"])
@@ -42,10 +42,10 @@ def configure_caddy(rainb0w_config: dict, caddy_config_file: str):
             "tls_connection_policies"
         ][0]["match"]["sni"] = [f"*.{main_domain}"]
         caddy_config["apps"]["tls"]["certificates"]["load_files"][0]["certificate"] = (
-            f"/etc/letsencrypt/live/{main_domain}/cert.pem"
+            f"/etc/ssl/cloudflare/{main_domain}.crt"
         )
         caddy_config["apps"]["tls"]["certificates"]["load_files"][0]["key"] = (
-            f"/etc/letsencrypt/live/{main_domain}/privkey.pem"
+            f"/etc/ssl/cloudflare/{main_domain}.key"
         )
 
     # VLESS WS

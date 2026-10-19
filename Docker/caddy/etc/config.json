@@ -1,11 +1,5 @@
 {
-  "logging": {
-    "logs": {
-      "default": {
-        "level": "DEBUG"
-      }
-    }
-  },
+  "logging": { "logs": { "default": { "level": "DEBUG" } } },
   "apps": {
     "layer4": {
       "servers": {
@@ -13,43 +7,12 @@
           "listen": [":443"],
           "routes": [
             {
-              "match": [
-                {
-                  "tls": {
-                    "sni": []
-                  }
-                }
-              ],
+              "match": [{ "tls": { "sni": [] } }],
               "handle": [
-                {
-                  "handler": "tls"
-                },
+                { "handler": "tls" },
                 {
                   "handler": "proxy",
-                  "upstreams": [
-                    {
-                      "dial": ["unix//dev/shm/h2c.socket"]
-                    }
-                  ]
-                }
-              ]
-            },
-            {
-              "match": [
-                {
-                  "tls": {
-                    "sni": []
-                  }
-                }
-              ],
-              "handle": [
-                {
-                  "handler": "proxy",
-                  "upstreams": [
-                    {
-                      "dial": ["unix//dev/shm/watchdog.socket"]
-                    }
-                  ]
+                  "upstreams": [{ "dial": ["sing-box:9443"] }]
                 }
               ]
             }
@@ -81,57 +44,22 @@
           "listen": [":443"],
           "routes": [
             {
-              "match": [
-                {
-                  "host": []
-                }
-              ],
-              "handle": [
-                {
-                  "handler": "subroute",
-                  "routes": [
-                    {
-                      "handle": [
-                        {
-                          "handler": "file_server",
-                          "root": "/var/www/html"
-                        }
-                      ],
-                      "terminal": true
-                    }
-                  ]
-                }
-              ]
+              "match": [{ "host": [] }],
+              "handle": [{ "handler": "file_server", "root": "/var/www/html" }]
             }
           ],
           "tls_connection_policies": [
             {
-              "match": {
-                "sni": []
-              },
-              "cipher_suites": [
-                "TLS_CHACHA20_POLY1305_SHA256",
-                "TLS_AES_128_GCM_SHA256",
-                "TLS_AES_256_GCM_SHA384"
-              ],
-              "protocol_min": "tls1.3"
+              "match": { "sni": [] },
+              "protocol_min": "tls1.2"
             }
           ]
         },
         "fallback": {
-          "listener_wrappers": [
-            {
-              "wrapper": "proxy_protocol"
-            }
-          ],
-          "listen": ["unix//dev/shm/h2c.socket"],
+          "listen": [":9443"],
           "routes": [
             {
-              "match": [
-                {
-                  "host": []
-                }
-              ],
+              "match": [{ "host": [] }],
               "handle": [
                 {
                   "handler": "subroute",
@@ -150,48 +78,21 @@
                         {
                           "flush_interval": -1,
                           "handler": "reverse_proxy",
-                          "headers": {
-                            "request": {
-                              "set": {
-                                "X-Real-Ip": ["{http.request.remote.host}"]
-                              }
-                            }
-                          },
-                          "upstreams": [
-                            {
-                              "dial": "sing-box:9443"
-                            }
-                          ]
+                          "upstreams": [{ "dial": "sing-box:9443" }]
                         }
                       ]
                     },
                     {
-                      "match": [
-                        {
-                          "path": [],
-                          "protocol": "grpc"
-                        }
-                      ],
+                      "match": [{ "path": [], "protocol": "grpc" }],
                       "handle": [
                         {
                           "flush_interval": -1,
                           "handler": "reverse_proxy",
-                          "headers": {
-                            "request": {
-                              "set": {
-                                "X-Real-Ip": ["{http.request.remote.host}"]
-                              }
-                            }
-                          },
                           "transport": {
                             "protocol": "http",
                             "versions": ["h2c", "2"]
                           },
-                          "upstreams": [
-                            {
-                              "dial": "sing-box:9444"
-                            }
-                          ]
+                          "upstreams": [{ "dial": "sing-box:9444" }]
                         }
                       ]
                     },
@@ -209,48 +110,9 @@
                   ]
                 }
               ]
-            },
-            {
-              "handle": [
-                {
-                  "handler": "reverse_proxy",
-                  "headers": {
-                    "request": {
-                      "set": {
-                        "X-Real-Ip": ["{http.request.remote.host}"]
-                      }
-                    }
-                  },
-                  "upstreams": [
-                    {
-                      "dial": "unix//dev/shm/watchdog.socket"
-                    }
-                  ]
-                }
-              ]
             }
           ],
-          "automatic_https": {
-            "disable": true
-          },
           "protocols": ["h1", "h2c"]
-        },
-        "watchdog": {
-          "listen": ["unix//dev/shm/watchdog.socket"],
-          "routes": [
-            {
-              "handle": [
-                {
-                  "body": "Access Denied",
-                  "close": true,
-                  "handler": "static_response",
-                  "status_code": 403
-                }
-              ],
-              "terminal": true
-            }
-          ],
-          "protocols": ["h2c", "h2", "h1"]
         }
       }
     },

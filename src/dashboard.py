@@ -5,7 +5,6 @@ import re
 import shutil
 import sys
 from time import sleep
-from typing import List
 
 from pick import pick
 from rich import print

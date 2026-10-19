@@ -18,10 +18,9 @@ services:
     volumes:
       - data:/data
       - config:/config
-      - sockets:/dev/shm
       - /var/log:/var/log
       - /etc/localtime:/etc/localtime:ro
-      - /etc/letsencrypt/:/etc/letsencrypt/:ro
+      - /etc/ssl/cloudflare/:/etc/ssl/cloudflare/:ro
       - ./html:/var/www/html
       - ./etc/config.json:/etc/caddy/config.json
     command: caddy run --config /etc/caddy/config.json
@@ -34,13 +33,9 @@ services:
 volumes:
   data:
   config:
-  sockets:
-    external: true
 
 networks:
   web:
-    enable_ipv6: true
     external: true
   proxy-tier:
-    enable_ipv6: true
     external: true

@@ -10,11 +10,8 @@ source $PWD/src/shell/docker/init_vol_net.sh
 source $PWD/src/shell/performance/tune_kernel_net.sh
 
 # Activate necessary protections
+source $PWD/src/shell/os/install_xt_geoip.sh
 source $PWD/src/shell/security/setup_firewall.sh
-
-# Get TLS certs
-domain=$(python3 $PWD/src/shell/helper/get_domain.py)
-source $PWD/src/shell/security/get_tls_certs.sh $domain
 
 if [ ! "$(docker images -q caddy)" ]; then
     docker buildx build --tag caddy $HOME/Rainb0w_Home/caddy/

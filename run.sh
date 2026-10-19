@@ -61,14 +61,12 @@ fi
 if [ ! -d "$HOME/Rainb0w_Home" ]; then
     # Install required packages
     fn_install_required_packages
-    # Install xtables geoip
-    source $PWD/src/shell/os/install_xt_geoip.sh
     # Install Docker
     source $PWD/src/shell/os/install_docker.sh
-    # Install Certbot
-    source $PWD/src/shell/os/install_certbot.sh
     # Install WARP Plus
     source $PWD/src/shell/os/install_warp_plus.sh
+    # Setup REALITY key-pairs
+    source $PWD/src/shell/security/gen_x25519_keys.sh
     # Reboot if needed
     source $PWD/src/shell/os/check_reboot_required.sh
     clear

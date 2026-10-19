@@ -2,8 +2,6 @@
 [DOMAINS]
 # This domain will be used for the decoy website.
 MAIN_DOMAIN = ""
-# Used for TCP/UDP connections such as Hysteria that are not compatible with CDNs.
-DIRECT_CONN_DOMAIN = ""
 # Used for protocols that are CDN compatible (Websocket, HTTPUpgrade, gRPC)
 CDN_COMPAT_DOMAIN = ""
 
@@ -11,3 +9,10 @@ CDN_COMPAT_DOMAIN = ""
 [CLOUDFLARE]
 # This is used for the Cerbot Cloudflare DNS plugin to verify your domain using DNS-01 challenges and obtain TLS certs
 API_KEY = ""
+
+[REALITY]
+PRIVATE_KEY = ""
+PUBLIC_KEY = ""
+SHORT_ID = ""
+SNI = ""
+PORT = 443

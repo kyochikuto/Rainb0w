@@ -7,6 +7,7 @@ import bcrypt
 import qrcode
 from rich import print
 
+from base.config import PUBLIC_IP
 from utils.helper import (
     gen_random_string,
     load_json,
@@ -41,9 +42,9 @@ def create_new_user(username: str):
         "name": username,
         "password": password,
         "uuid": uuid,
-        "hysteria_url": "",
         "vless_ws_url": "",
         "vless_grpc_url": "",
+        "vless_reality_url": "",
     }
     return user_info
 
@@ -69,11 +70,9 @@ def add_share_urls(
         f"vless://{user_info['uuid']}@{domains['CDN_COMPAT_DOMAIN']}:443?mode=gun&security=tls&encryption=none&alpn=h2,http/1.1&type=grpc&serviceName={proxy_config['service_name']}&fp=firefox&sni={domains['CDN_COMPAT_DOMAIN']}#{user_info['name']}%20[VLESS%20gRPC]"
     )
 
-    # Hysteria2
-    proxy_config = next(item for item in proxies if item["type"] == "HYSTERIA")
-    user_info["hysteria_url"] = (
-        f"hysteria2://{user_info['password']}@{domains['DIRECT_CONN_DOMAIN']}:8443/?obfs=salamander&obfs-password={proxy_config['obfs']}&sni={domains['DIRECT_CONN_DOMAIN']}#{user_info['name']}%20[Hysteria]"
-    )
+    # VLESS REALITY
+    proxy_config = rainb0w_config["REALITY"]
+    user_info["vless_reality_url"] = f"vless://{user_info['uuid']}@{PUBLIC_IP}:{proxy_config['PORT']}?security=reality&encryption=none&pbk={proxy_config['PUBLIC_KEY']}&headerType=none&fp=chrome&spx=%2F&type=tcp&flow=xtls-rprx-vision&sni={proxy_config['SNI']}&sid={proxy_config['SHORT_ID']}#{user_info['name']}%20[REALITY]".strip()
 
     return user_info
 
@@ -90,9 +89,9 @@ def add_user_to_proxies(
     for inbound in config["inbounds"]:
         if inbound["type"] in ["vless", "vmess"]:
             new_client = {"name": user_info["name"], "uuid": user_info["uuid"]}
-            inbound["users"].append(new_client)
-        elif inbound["type"] == "hysteria2":
-            new_client = {"name": user_info["name"], "password": user_info["password"]}
+            if inbound["tag"] == "REALITY":
+                new_client["flow"] = "xtls-rprx-vision"
+
             inbound["users"].append(new_client)
         else:
             pass
@@ -137,7 +136,7 @@ def print_client_info(username: str, rainb0w_users_file: str):
 
 [bold green]VLESS (Websocket):[/bold green] [white]{user["vless_ws_url"]}[/white]\n
 [bold green]VLESS (gRPC):[/bold green] [white]{user["vless_grpc_url"]}[/white]\n
-[bold green]Hysteria:[/bold green] [white]{user["hysteria_url"]}[/white]\n
+[bold green]VLESS (REALITY):[/bold green] [white]{user["vless_reality_url"]}[/white]\n
 
 [bold yellow]NOTE: DO NOT SHARE THESE INFORMATION OVER SMS,
 USE EMAILS OR OTHER SECURE WAYS OF COMMUNICATION INSTEAD![/bold yellow]""".lstrip()

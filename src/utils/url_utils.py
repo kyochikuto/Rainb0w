@@ -50,7 +50,7 @@ def prompt_main_domain() -> str:
 def prompt_direct_conn_domain():
     print(
         """Your DIRECT subdomain will be used for the following:
-    - Hysteria (UDP)
+    - VLESS REALITY
     """
     )
     direct_domain = input(

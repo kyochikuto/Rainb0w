@@ -1,4 +1,5 @@
 import os
+import random
 import shutil
 import signal
 import sys
@@ -6,24 +7,25 @@ import sys
 from base.config import (
     CADDY_CONFIG_FILE,
     CADDY_HTML_DIR,
-    CERTBOT_CF_SECRET_FILE,
     RAINB0W_BACKUP_DIR,
     RAINB0W_CONFIG_FILE,
     RAINB0W_HOME_DIR,
     RAINB0W_USERS_FILE,
+    REALITY_KEY_FILE,
     SINGBOX_CONFIG_FILE,
+    TLS_CERTS_DIR,
     WARP_CONF_FILE,
 )
 from proxy.caddy import configure_caddy
 from proxy.singbox import (
     gen_cdn_proxy_params,
-    gen_hysteria_proxy_params,
     insert_proxy_params,
-    insert_tls_cert_path,
+    insert_reality_keypair,
     insert_warp_params,
+    prompt_reality_destination_server,
 )
 from user.user_manager import add_user_to_proxies, create_new_user, prompt_username
-from utils.cf_utils import insert_cloudflare_api_key, prompt_cloudflare_api_key
+from utils.cf_utils import prompt_cloudflare_api_key, request_cloudflare_origin_certs
 from utils.helper import (
     load_toml,
     print_txt_file,
@@ -40,21 +42,21 @@ from utils.website_utils import download_html5up_sample
 
 
 def apply_config(username=None):
+    # Configure REALITY security keys
+    insert_reality_keypair(REALITY_KEY_FILE, RAINB0W_CONFIG_FILE)
+
     rainb0w_config = load_toml(RAINB0W_CONFIG_FILE)
     rainb0w_users = load_toml(RAINB0W_USERS_FILE)
 
-    # Configure Certbot
-    insert_cloudflare_api_key(
-        CERTBOT_CF_SECRET_FILE, rainb0w_config["CLOUDFLARE"]["API_KEY"]
+    # Get Cloudflare Origin certs
+    request_cloudflare_origin_certs(
+        rainb0w_config["CLOUDFLARE"]["API_KEY"],
+        rainb0w_config["DOMAINS"]["MAIN_DOMAIN"],
+        TLS_CERTS_DIR
     )
 
-    # Insert TLS certs path for inbounds that require it
-    insert_tls_cert_path(
-        rainb0w_config["DOMAINS"]["MAIN_DOMAIN"],
-        SINGBOX_CONFIG_FILE,
-    )
     # Configure proxies
-    insert_proxy_params(rainb0w_config["PROXY"], SINGBOX_CONFIG_FILE)
+    insert_proxy_params(rainb0w_config["PROXY"], rainb0w_config["REALITY"], SINGBOX_CONFIG_FILE)
 
     # Configure WARP endpoint
     insert_warp_params(SINGBOX_CONFIG_FILE, WARP_CONF_FILE)
@@ -100,21 +102,23 @@ def configure():
     progress_indicator("Main Domain")
     rainb0w_config["DOMAINS"]["MAIN_DOMAIN"] = prompt_main_domain()
 
-    progress_indicator("Direct Protocols Subdomain")
-    rainb0w_config["DOMAINS"]["DIRECT_CONN_DOMAIN"] = prompt_direct_conn_domain()
-
-    progress_indicator("CDN Protocols Subdomain")
+    progress_indicator("CDN-Compatible Protocols Subdomain")
     rainb0w_config["DOMAINS"]["CDN_COMPAT_DOMAIN"] = prompt_cdn_domain()
 
     rainb0w_config["PROXY"] = gen_cdn_proxy_params(
         rainb0w_config["DOMAINS"]["CDN_COMPAT_DOMAIN"],
     )
 
-    rainb0w_config["PROXY"].append(
-        gen_hysteria_proxy_params(rainb0w_config["DOMAINS"]["MAIN_DOMAIN"])
+    progress_indicator("REALITY Destination")
+    rainb0w_config["REALITY"]["SNI"], rainb0w_config["REALITY"]["PORT"] = (
+        prompt_reality_destination_server()
     )
 
-    progress_indicator("Cloudflare API Key")
+    rainb0w_config["REALITY"]["SHORT_ID"] = "".join(
+        random.choice("0123456789abcdef") for _ in range(16)
+    )
+
+    progress_indicator("Cloudflare API Token")
     rainb0w_config["CLOUDFLARE"]["API_KEY"] = prompt_cloudflare_api_key()
 
     # Save the configuration to file because we're going to pass it around next

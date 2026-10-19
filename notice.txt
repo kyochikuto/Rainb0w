@@ -1,20 +1,9 @@
-This script will deploy VLESS and Hysteria2 proxies using Sing-Box 
+This script will deploy VLESS and proxies using Sing-Box
 and it requires the following in order to proceed:
 
 1. A Cloudflare account
 
-2. A Cloudflare API key that has permission to modify DNS zones (Refer to repo wiki for tutorials)
+2. A Cloudflare API key that has permission to edit the following Zones [DNS, SSL and Certificates]
 
-3. A domain name added to your Cloudflare account with 2 subdomains with 'A' records pointed to your origin server:
-
-    (A). A subdomain to use for protocols that require a direct connection
-        to your server such as [Hysteria]
-
-    (B). A subdomain to use for protocols that are compatible with CDNs
-        such as [Websocket, gRPC], using this setup you can turn on CDN routing
-        for these protocols when your IP is blocked without affecting your other proxies and
-        without requiring any change on the client side.
-
-        NOTE: CDN proxy MUST BE OFF while deploying! You can turn it on after finishing the setup.
-
-
+3. A domain name added to your Cloudflare account with a subdomain with 'A' record pointed to your origin server to use for protocols that are compatible with CDNs
+        such as [Websocket, gRPC]

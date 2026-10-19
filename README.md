@@ -6,7 +6,6 @@
 
 - VLESS [ Websocket ]
 - VLESS [ gRPC ]
-- Hysteria [ UDP Obfuscated]
 
 ## 🔑 امنیت و دسترسی
 

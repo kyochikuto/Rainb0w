@@ -9,6 +9,8 @@ dependencies = [
     "PyYAML",
     "bcrypt",
     "beautifulsoup4>=4.13.5",
+    "cloudflare>=5.9.0",
+    "cryptography>=50.0.2",
     "pick",
     "psutil",
     "python-dotenv",
@@ -16,6 +18,7 @@ dependencies = [
     "requests",
     "rich",
     "toml",
+    "wrapper-tls-requests>=1.2.5",
 ]
 readme = "README.md"
 requires-python = ">= 3.12"
